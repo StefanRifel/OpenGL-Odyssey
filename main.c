@@ -28,7 +28,7 @@ void init(void) {
         printf("Error compiling vertex shader:");
         GLchar infoLog[1024];
         glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog);
-        printf(infoLog);
+        printf("%s", infoLog);
     }
 
     // create and comile fragment shader
@@ -48,7 +48,7 @@ void init(void) {
         printf("Error compiling fragment shader:");
         GLchar infoLog[1024];
         glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog);
-        printf(infoLog);
+        printf("%s", infoLog);
     }
 
     // create and link shader program
@@ -62,7 +62,7 @@ void init(void) {
         printf("Error linking program:");
         GLchar infoLog[1024];
         glGetProgramInfoLog(program, 1024, NULL, infoLog);
-        printf(infoLog);
+        printf("%s", infoLog);
     }
 
     glValidateProgram(program);
@@ -71,7 +71,7 @@ void init(void) {
         printf("Error validating program:");
         GLchar infoLog[1024];
         glGetProgramInfoLog(program, 1024, NULL, infoLog);
-        printf(infoLog);
+        printf("%s", infoLog);
     }
 
     // create triangle buffer
