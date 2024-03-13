@@ -1,13 +1,24 @@
+PROGRAMM_NAME = OpenGL_Odyssey
+
 GLEW_LIBS = -lGLEW -lEGL -lGL -lGLU -lOpenGL 
 GLFW_LIBS = -lglfw
 
-OBJ = main.o Logger.o
+CC = g++
+SRC = src
+BIN = bin
+OBJ = obj
 
-OpenGL_Odyssey: $(OBJ)
-	g++ -o $@ $(OBJ) $(GLEW_LIBS) $(GLFW_LIBS)
+TARGET = $(BIN)/$(PROGRAMM_NAME)
+SRCS = $(wildcard $(SRC)/*.cc)
+OBJS = $(patsubst $(SRC)/%.cc, $(OBJ)/%.o, $(SRCS))
 
-%.o: %.cc
-	g++ -c $<
+all:$(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $(OBJS) $(GLEW_LIBS) $(GLFW_LIBS)
+
+obj/%.o: $(SRC)/%.cc
+	g++ -c $< -o $@
 
 clean:
-	rm OpenGL_Odyssey $(OBJ)
+	rm $(BIN)/* $(OBJ)/*
