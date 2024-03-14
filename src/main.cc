@@ -16,10 +16,11 @@ void init(void) {
     const char *vertexShaderSource = 
         "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"     // position has attribute position 0
+        "layout (location = 1) in vec3 aColor;\n"
         "out vec4 vertexColor;\n"                   // specify a color output to the fragment shader
         "void main() {\n"
-        "   gl_Position = vec4(aPos.xyz, 1.0);\n"
-        "   vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
+        "   gl_Position = vec4(aPos, 1.0);\n"
+        "   vertexColor = vec4(aColor, 1.0);\n"
         "}\n";
     
     GLuint vertexShader;
@@ -117,10 +118,10 @@ void init(void) {
 
     // create triangle buffer
     float vertices[] = {
-        0.5f, 0.5f, 0.0f, // top right
-        0.5f, -0.5f, 0.0f, // bottom right
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,// top right
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
         //-0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f, // top left
+        -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top left
     };
     GLuint indices[] = { // note that we start from 0!
         0, 1, 3, // first triangle
@@ -156,10 +157,19 @@ void init(void) {
         3, 
         GL_FLOAT, 
         GL_FALSE, 
-        3 * sizeof(float),
+        6 * sizeof(GL_FLOAT),
         (void*)0
     );
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(
+        1, 
+        3, 
+        GL_FLOAT, 
+        GL_FALSE, 
+        6 * sizeof(GL_FLOAT),
+        (void*)(3 * sizeof(GL_FLOAT))
+    );
+    glEnableVertexAttribArray(1);
     //VAO2
     glGenVertexArrays(1, &VAO2);
     glBindVertexArray(VAO2);
