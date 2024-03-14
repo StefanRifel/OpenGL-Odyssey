@@ -4,6 +4,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <cmath>
 
 GLuint shaderProgram;
 GLuint shaderProgram2;
@@ -14,9 +15,11 @@ void init(void) {
     // create and compile vertex shader
     const char *vertexShaderSource = 
         "#version 330 core\n"
-        "layout (location = 0) in vec3 aPos;\n"
+        "layout (location = 0) in vec3 aPos;\n"     // position has attribute position 0
+        "out vec4 vertexColor;\n"                   // specify a color output to the fragment shader
         "void main() {\n"
-        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "   gl_Position = vec4(aPos.xyz, 1.0);\n"
+        "   vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
         "}\n";
     
     GLuint vertexShader;
@@ -38,8 +41,9 @@ void init(void) {
     const char *fragmentShaderSource = 
         "#version 330 core\n"
         "out vec4 FragColor;\n"
+        "in vec4 vertexColor;\n"
         "void main() {\n"
-        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        "   FragColor = vertexColor;\n"
         "}\n";
 
     GLuint fragmentShader;
@@ -57,9 +61,10 @@ void init(void) {
     // create and compile secound fragment shader
     const char *fragmentShaderSource2 = 
         "#version 330 core\n"
-        "out vec4 FragColor;\n"
+        "out vec4 FragColor;\n"     
+        "uniform vec4 ourColor;\n"  // we set this variable in the OpenGL code.
         "void main() {\n"
-        "   FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+        "   FragColor = ourColor;\n"
         "}\n";
 
     GLuint fragmentShader2;
@@ -198,11 +203,24 @@ void draw(void) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // draw first triangle
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
+    // draw secound triangle
     glUseProgram(shaderProgram2);
+    
+    float timeValue = glfwGetTime();
+    float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+    int vertexColorLocation = glGetUniformLocation(shaderProgram2, "ourColor");
+    if(vertexColorLocation) {
+        Logger::logerr("failed to load ourColor from fragment shader: ");
+        std::cout << vertexColorLocation << std::endl;
+    }  
+    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+    // render step
     glBindVertexArray(VAO2);
     glDrawArrays(GL_TRIANGLES, 0 , 3);
 }
@@ -240,6 +258,12 @@ int main(void) {
 
     // set line or fill from graphic
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes
+<< std::endl;
+
     // render loop
     while (!glfwWindowShouldClose(window))
     {
