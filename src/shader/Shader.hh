@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "../utils/Logger.hh"
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -16,7 +18,9 @@ public:
     
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
+    Shader();
 
+    void createShader(const char* vertexPath, const char* fragmentPath);
     // use/activate the shader
     void use();
     // utility uniform functions

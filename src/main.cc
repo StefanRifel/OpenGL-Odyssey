@@ -1,121 +1,21 @@
 #include <stdio.h>
 #include <iostream>
 #include "utils/Logger.hh"
+#include "shader/Shader.hh"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <cmath>
 
-GLuint shaderProgram;
-GLuint shaderProgram2;
+Shader shaderProgram;
+Shader shaderProgram2;
 GLuint VAO;
 GLuint VAO2;
 
 void init(void) {
-    // create and compile vertex shader
-    const char *vertexShaderSource = 
-        "#version 330 core\n"
-        "layout (location = 0) in vec3 aPos;\n"     // position has attribute position 0
-        "layout (location = 1) in vec3 aColor;\n"
-        "out vec4 vertexColor;\n"                   // specify a color output to the fragment shader
-        "void main() {\n"
-        "   gl_Position = vec4(aPos, 1.0);\n"
-        "   vertexColor = vec4(aColor, 1.0);\n"
-        "}\n";
-    
-    GLuint vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    GLint status;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        Logger::logerr("Error compiling vertex shader: ");
-        GLchar infoLog[1024];
-        glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog);
-        printf("%s", infoLog);
-    }
-
-    // create and compile fragment shader
-    const char *fragmentShaderSource = 
-        "#version 330 core\n"
-        "out vec4 FragColor;\n"
-        "in vec4 vertexColor;\n"
-        "void main() {\n"
-        "   FragColor = vertexColor;\n"
-        "}\n";
-
-    GLuint fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        Logger::logerr("Error compiling fragment shader: ");
-        GLchar infoLog[1024];
-        glGetShaderInfoLog(fragmentShader, 1024, NULL, infoLog);
-        printf("%s", infoLog);
-    }
-    // create and compile secound fragment shader
-    const char *fragmentShaderSource2 = 
-        "#version 330 core\n"
-        "out vec4 FragColor;\n"     
-        "uniform vec4 ourColor;\n"  // we set this variable in the OpenGL code.
-        "void main() {\n"
-        "   FragColor = ourColor;\n"
-        "}\n";
-
-    GLuint fragmentShader2;
-    fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
-    glCompileShader(fragmentShader2);
-
-    glGetShaderiv(fragmentShader2, GL_COMPILE_STATUS, &status);
-    if (!status) {
-        Logger::logerr("Error compiling fragment shader: ");
-        GLchar infoLog[1024];
-        glGetShaderInfoLog(fragmentShader2, 1024, NULL, infoLog);
-        printf("%s", infoLog);
-    }
-
-    // create and link shader program
-    shaderProgram = glCreateProgram();
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-
-    shaderProgram2 = glCreateProgram();
-    glAttachShader(shaderProgram2, vertexShader);
-    glAttachShader(shaderProgram2, fragmentShader2);
-    glLinkProgram(shaderProgram2);
-
-
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
-    if (!status) {
-        Logger::logerr("Error linking program:");
-        GLchar infoLog[1024];
-        glGetProgramInfoLog(shaderProgram, 1024, NULL, infoLog);
-        printf("%s", infoLog);
-    }
-
-    glGetProgramiv(shaderProgram2, GL_LINK_STATUS, &status);
-    if (!status) {
-        Logger::logerr("Error linking program:");
-        GLchar infoLog[1024];
-        glGetProgramInfoLog(shaderProgram2, 1024, NULL, infoLog);
-        printf("%s", infoLog);
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    glDeleteShader(fragmentShader2);
+    shaderProgram.createShader("../shaders/shader.vs", "../shaders/shader.fs");
+    shaderProgram2.createShader("../shaders/shader.vs", "../shaders/shader2.fs");
 
     // create triangle buffer
     float vertices[] = {
@@ -199,16 +99,16 @@ void draw(void) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw first triangle
-    glUseProgram(shaderProgram);
+    shaderProgram.use();
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // draw secound triangle
-    glUseProgram(shaderProgram2);
+    shaderProgram2.use();
     
     float timeValue = glfwGetTime();
     float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-    int vertexColorLocation = glGetUniformLocation(shaderProgram2, "ourColor");
+    int vertexColorLocation = glGetUniformLocation(shaderProgram2.ID, "ourColor");
     if(vertexColorLocation) {
         Logger::logerr("failed to load ourColor from fragment shader: ");
         std::cout << vertexColorLocation << std::endl;
