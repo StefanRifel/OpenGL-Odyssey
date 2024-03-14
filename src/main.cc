@@ -138,29 +138,13 @@ void init(void) {
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(
-        0, 
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        3 * sizeof(float), 
-        (void*)0
-    );
-    glEnableVertexAttribArray(0);
+
     //VBO2
     GLuint VBO2;
     glGenBuffers(1, &VBO2);
     glBindBuffer(GL_ARRAY_BUFFER, VBO2);
     glBufferData(GL_ARRAY_BUFFER, sizeof(trigVertices), trigVertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(
-        0, 
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        3 * sizeof(float), 
-        (void*)0
-    );
-    glEnableVertexAttribArray(0);
+
 
     //VAO
     glGenVertexArrays(1, &VAO);
