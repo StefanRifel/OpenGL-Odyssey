@@ -3,6 +3,9 @@
 #include "utils/Logger.hh"
 #include "shader/Shader.hh"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "external/stb_image.h"
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -10,29 +13,74 @@
 
 Shader shaderProgram;
 Shader shaderProgram2;
+Shader shaderProgram3;
 GLuint VAO;
 GLuint VAO2;
+GLuint VAO3;
+GLuint texture;
+
+void loadTexture() {
+    
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping/filtering options (on currently bound texture)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load and generate the texture
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load("../assets/wall.jpg", &width, &height, &nrChannels, 0);
+
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+        GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+
+    stbi_image_free(data);
+}
 
 void init(void) {
     shaderProgram.createShader("../shaders/shader.vs", "../shaders/shader.fs");
     shaderProgram2.createShader("../shaders/shader.vs", "../shaders/shader2.fs");
+    shaderProgram3.createShader("../shaders/shader.vs", "../shaders/shader3.fs");
 
     // create triangle buffer
-    float vertices[] = {
+    GLfloat vertices[] = {
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,// top right
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
         //-0.5f, -0.5f, 0.0f, // bottom left
         -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top left
     };
+
     GLuint indices[] = { // note that we start from 0!
         0, 1, 3, // first triangle
         1, 2, 3, // second triangle
     };
 
-    float trigVertices[] = {
+
+    GLfloat rectangleVertices [] = {
+        // position       , colors          , texture coordinates
+        //  X,     Y,    Z,    R,    G,    B,    S,    T
+        -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, //left-bottom
+        -1.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, //left-top
+         0.0f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //right-top
+         0.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //right-bottom
+    };
+
+    GLfloat trigVertices[] = {
         -1.0f, 1.0f, 0.0f,
         1.0f, 1.0f, 0.0f,
         0.0f, 0.6f, 0.0f
+    };
+
+    GLfloat textureCordinates[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.5f, 1.0f
     };
 
     //VBO
@@ -46,13 +94,16 @@ void init(void) {
     glGenBuffers(1, &VBO2);
     glBindBuffer(GL_ARRAY_BUFFER, VBO2);
     glBufferData(GL_ARRAY_BUFFER, sizeof(trigVertices), trigVertices, GL_STATIC_DRAW);
-
+    //VBO3
+    GLuint VBO3;
+    glGenBuffers(1, &VBO3);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
 
     //VAO
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(
         0, 
         3, 
@@ -75,7 +126,6 @@ void init(void) {
     glGenVertexArrays(1, &VAO2);
     glBindVertexArray(VAO2);
     glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(trigVertices), trigVertices, GL_STATIC_DRAW);
     glVertexAttribPointer(
         0, 
         3, 
@@ -85,13 +135,45 @@ void init(void) {
         (void*)0
     );
     glEnableVertexAttribArray(0);
+    //VAO3
+    glGenVertexArrays(1, &VAO3);
+    glBindVertexArray(VAO3);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+    glVertexAttribPointer(
+        0,                  // location attribute number in vertex shader             
+        3,                  // size of the vertex attribute
+        GL_FLOAT,           // type of the data
+        GL_FALSE,           // if we want the data to be normalized
+        8 * sizeof(float),  // stride and tells us the space between consecutive vertex attributes
+        (void*)0            // offset of where the position data begins in the buffer
+    );
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(
+        1, 
+        3, 
+        GL_FLOAT, 
+        GL_FALSE, 
+        8 * sizeof(float),
+        (void*)(sizeof(float) * 3)
+    );
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(
+        2, 
+        2, 
+        GL_FLOAT, 
+        GL_FALSE, 
+        8 * sizeof(float),
+        (void*)(sizeof(float) * 6)
+    );
+    glEnableVertexAttribArray(2);
+
+    loadTexture();
 
     //EBO
-/*  GLuint EBO;
+    GLuint EBO;
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-*/
 }
 
 void draw(void) {
@@ -118,6 +200,14 @@ void draw(void) {
     // render step
     glBindVertexArray(VAO2);
     glDrawArrays(GL_TRIANGLES, 0 , 3);
+
+    // rectangle
+    shaderProgram3.use();
+    
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindVertexArray(VAO3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    
 }
 
 void processInput(GLFWwindow *window) {
@@ -156,8 +246,7 @@ int main(void) {
 
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes
-<< std::endl;
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
     // render loop
     while (!glfwWindowShouldClose(window))
