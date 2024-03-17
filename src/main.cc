@@ -11,15 +11,18 @@
 
 #include <cmath>
 
+enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
+
 Shader shaderProgram;
 Shader shaderProgram2;
 Shader shaderProgram3;
 GLuint VAO;
 GLuint VAO2;
 GLuint VAO3;
-GLuint texture;
+GLuint texture1;
+GLuint texture2;
 
-void loadTexture() {
+void loadTexture(const char* texturePath, GLuint& texture, FileFormat format) {
     
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -30,11 +33,11 @@ void loadTexture() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // load and generate the texture
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("../assets/wall.jpg", &width, &height, &nrChannels, 0);
+    stbi_set_flip_vertically_on_load(true); // flip the y-axis during image loading
+    unsigned char *data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
 
     if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-        GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
         std::cout << "Failed to load texture" << std::endl;
@@ -167,7 +170,8 @@ void init(void) {
     );
     glEnableVertexAttribArray(2);
 
-    loadTexture();
+    loadTexture("../assets/wall.jpg", texture1, jpg);
+    loadTexture("../assets/awesomeface.png", texture2, png);
 
     //EBO
     GLuint EBO;
@@ -203,9 +207,15 @@ void draw(void) {
 
     // rectangle
     shaderProgram3.use();
+    shaderProgram3.setInt("texture1", 0);
+    shaderProgram3.setInt("texture2", 1); 
     
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glActiveTexture(GL_TEXTURE0); // activate texture unit first
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glActiveTexture(GL_TEXTURE1); // activate texture unit first
+    glBindTexture(GL_TEXTURE_2D, texture2);
     glBindVertexArray(VAO3);
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     
 }
