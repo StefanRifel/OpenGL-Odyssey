@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <iostream>
-#include "utils/Logger.hh"
-#include "shader/Shader.hh"
+#include "utils/Logger.hpp"
+#include "shader/Shader.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "external/stb_image.h"
+#include "include/stb_image.h"
+#include "include/glm/vec3.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -82,7 +83,7 @@ void init(void) {
 
     GLfloat textureCordinates[] = {
         0.0f, 0.0f,
-        1.0f, 0.0f,
+        2.0f, 0.0f,
         0.5f, 1.0f
     };
 

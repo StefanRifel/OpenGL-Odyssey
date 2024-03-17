@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../utils/Logger.hh"
+#include "../utils/Logger.hpp"
 
 #include <string>
 #include <fstream>
