@@ -25,6 +25,7 @@ Shader shaderProgram3;
 //GLuint texture2;
 
 std::vector<Mesh> objects;
+float winkel {0};
 
 std::vector<unsigned int> generateRandomColorCode() {
     std::vector<unsigned int> colorCode;
@@ -33,6 +34,17 @@ std::vector<unsigned int> generateRandomColorCode() {
         colorCode.push_back(std::rand() % 255);
     }
     return colorCode;
+}
+
+glm::vec2 calcPointOnCircle(float radius) {
+    glm::vec2 koordiante;
+    if(winkel == 360) {
+        winkel = 0;
+    }
+    koordiante.x = (float)(radius * cos(winkel * M_PI /180));
+    koordiante.y = (float)(radius * sin(winkel * M_PI /180));
+    winkel++;
+    return koordiante;
 }
 
 void init(void) {
@@ -64,6 +76,8 @@ void init(void) {
     Mesh mesh {loader.getVertices(), loader.getFaces(), color};
     //mesh.setColor(glm::ivec3 {220, 60, 5}); hochschule farbe
     objects.push_back(mesh);
+
+    calcPointOnCircle(0.3);
 }
 
 void draw(void) {
@@ -73,19 +87,10 @@ void draw(void) {
     for (Mesh mesh : objects) {
         std::vector<unsigned int> code = generateRandomColorCode();
         mesh.setColor(glm::ivec3 {code.at(0) , code.at(1), code.at(2)});
+        glm::vec2 position = calcPointOnCircle(0.7f);
+        mesh.changePosition(glm::vec2 {position.x, position.y});
         mesh.draw(shaderProgram);
     }
-
-    /*
-    float timeValue = glfwGetTime();
-    float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-    int vertexColorLocation = glGetUniformLocation(shaderProgram2.ID, "ourColor");
-    if(vertexColorLocation) {
-        Logger::logerr("failed to load ourColor from fragment shader: ");
-        std::cout << vertexColorLocation << std::endl;
-    }  
-    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-    */
 
     /*
     // rectangle

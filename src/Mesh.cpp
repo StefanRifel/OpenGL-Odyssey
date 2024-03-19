@@ -11,6 +11,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, glm::vec3 
     this->vertices = vertices;
     this->indices = indices;
     this->color = color;
+    this->position = glm::vec2 {0.0, 0.0};
 
     init();
 }
@@ -61,6 +62,9 @@ void Mesh::draw(Shader shader) const {
     float vertexColorLocation = glGetUniformLocation(shader.ID, "color");
     glUniform3f(vertexColorLocation, this->color.x, this->color.y, this->color.z);
 
+    float vertexPositionLocation = glGetUniformLocation(shader.ID, "position");
+    glUniform2f(vertexPositionLocation, this->position.x, this->position.y);
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
@@ -68,6 +72,11 @@ void Mesh::setColor(glm::ivec3 color) {
     this->color.x = ((100.0f / 255) * color.x) / 100;
     this->color.y = ((100.0f / 255) * color.y) / 100;
     this->color.z = ((100.0f / 255) * color.z) / 100;
+}
+
+void Mesh::changePosition(glm::vec2 position) {
+    this->position.x = position.x;
+    this->position.y = position.y; 
 }
 
 void Mesh::loadTexture(const char* texturePath, GLuint& texture, FileFormat format) {

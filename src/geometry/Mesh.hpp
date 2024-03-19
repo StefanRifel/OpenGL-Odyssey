@@ -5,6 +5,7 @@
 #include "../shader/Shader.hpp"
 #include <vector>
 #include "../include/glm/vec3.hpp"
+#include "../include/glm/vec2.hpp"
 #include "../geometry/Vertex.h"
 
 enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
@@ -16,6 +17,7 @@ private:
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
     glm::vec3 color;
+    glm::vec2 position;
 
 public:
     Mesh();
@@ -24,6 +26,7 @@ public:
     void init();
     void draw(Shader shader) const;
     void setColor(glm::ivec3 color);
+    void changePosition(glm::vec2 position);
     void loadTexture(const char* texturePath, GLuint& texture, FileFormat format);
 };
 
