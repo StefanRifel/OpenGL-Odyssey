@@ -7,14 +7,10 @@ Mesh::Mesh() {
     init();
 }
 
-Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<GLuint> indices) {
-    for(glm::vec3 vec : vertices) {
-        this->vertices.push_back(vec);
-    }
-
-    for(GLuint ui : indices) {
-        this->indices.push_back(ui);
-    }
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, glm::vec3 color) {
+    this->vertices = vertices;
+    this->indices = indices;
+    this->color = color;
 
     init();
 }
@@ -27,7 +23,7 @@ void Mesh::init() {
     //VBO
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &(vertices.at(0)), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &(vertices[0]), GL_STATIC_DRAW);
 
     //VAO
     glGenVertexArrays(1, &VAO);
@@ -38,13 +34,21 @@ void Mesh::init() {
         3,                      // size of the vertex attribute
         GL_FLOAT,               // type of the data
         GL_FALSE,               // if we want the data to be normalized
-        3 * sizeof(GL_FLOAT),   // stride and tells us the space between consecutive vertex attributes
+        sizeof(Vertex),   // stride and tells us the space between consecutive vertex attributes
         (void*)0                // offset of where the position data begins in the buffer
     );
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(
+        1,                      // location attribute number in vertex shader  
+        3,                      // size of the vertex attribute
+        GL_FLOAT,               // type of the data
+        GL_FALSE,               // if we want the data to be normalized
+        sizeof(Vertex),   // stride and tells us the space between consecutive vertex attributes
+        (void*)(sizeof(glm::vec3))               // offset of where the position data begins in the buffer
+    );
+    glEnableVertexAttribArray(1);
 
     //EBO
-    GLuint EBO;
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &(indices.at(0)), GL_STATIC_DRAW);
@@ -53,7 +57,17 @@ void Mesh::init() {
 void Mesh::draw(Shader shader) const {
     shader.use();
     glBindVertexArray(VAO);
+
+    float vertexColorLocation = glGetUniformLocation(shader.ID, "color");
+    glUniform3f(vertexColorLocation, this->color.x, this->color.y, this->color.z);
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+}
+
+void Mesh::setColor(glm::ivec3 color) {
+    this->color.x = ((100.0f / 255) * color.x) / 100;
+    this->color.y = ((100.0f / 255) * color.y) / 100;
+    this->color.z = ((100.0f / 255) * color.z) / 100;
 }
 
 void Mesh::loadTexture(const char* texturePath, GLuint& texture, FileFormat format) {

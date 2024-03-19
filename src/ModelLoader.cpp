@@ -14,7 +14,11 @@ void ModelLoader::load() {
         while (std::getline(modelFile, line)) {
             char type {line.at(0)};
             if (type == 'v') {
-                vertices.push_back(parseLineToVertexVector(line.substr(2, line.length())));
+                glm::vec3 vec = parseLineToVertexVector(line.substr(2, line.length()));
+                Vertex vertex;
+                vertex.position = vec;
+                vertex.color = glm::vec3 {0.8, 0.0, 0.0};
+                vertices.push_back(vertex);
             } else if (type == 'f') {
                 glm::uvec3 vec = parseLineToFaceVector(line.substr(2, line.length()));
                 faces.push_back(vec.x);
@@ -41,7 +45,7 @@ glm::uvec3 ModelLoader::parseLineToFaceVector(std::string line) {
     return vec;
 }
 
-std::vector<glm::vec3> ModelLoader::getVertices() {
+std::vector<Vertex> ModelLoader::getVertices() {
     return vertices;
 }
 

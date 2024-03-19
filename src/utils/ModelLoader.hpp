@@ -8,6 +8,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "../geometry/Vertex.h"
 
 #include <fstream>
 #include <iostream>
@@ -17,7 +18,7 @@ class ModelLoader {
 
 private:
     std::string path;
-    std::vector<glm::vec3> vertices;
+    std::vector<Vertex> vertices;
     std::vector<GLuint> faces;
 
 public:
@@ -26,7 +27,7 @@ public:
     static glm::vec3 parseLineToVertexVector(std::string line);
     static glm::uvec3 parseLineToFaceVector(std::string line);
 
-    std::vector<glm::vec3> getVertices();
+    std::vector<Vertex> getVertices();
     std::vector<GLuint> getFaces();
     
     ~ModelLoader();

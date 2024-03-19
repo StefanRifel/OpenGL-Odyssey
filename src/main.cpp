@@ -13,6 +13,7 @@
 #include <GLFW/glfw3.h>
 
 #include <cmath>
+#include <ctime>
 
 //enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
 
@@ -25,6 +26,15 @@ Shader shaderProgram3;
 
 std::vector<Mesh> objects;
 
+std::vector<unsigned int> generateRandomColorCode() {
+    std::vector<unsigned int> colorCode;
+    std::srand(std::time(nullptr));
+    for(int i = 0; i < 3; i++) {
+        colorCode.push_back(std::rand() % 255);
+    }
+    return colorCode;
+}
+
 void init(void) {
     shaderProgram.createShader("../shaders/shader.vs", "../shaders/shader.fs");
     shaderProgram2.createShader("../shaders/shader.vs", "../shaders/shader2.fs");
@@ -32,6 +42,8 @@ void init(void) {
 
     //loadTexture("../assets/wall.jpg", texture1, jpg);
     //loadTexture("../assets/awesomeface.png", texture2, png);
+
+    glm::vec3 color {0.4f, 0.2f, 0.5f};
 
     glm::vec3 a {-1.0f, 1.0f, 0.0f};
     glm::vec3 b {1.0f, 1.0f, 0.0};
@@ -49,7 +61,8 @@ void init(void) {
     ModelLoader loader {"../assets/models/hsh_logo.txt"};
     loader.load();
 
-    Mesh mesh {loader.getVertices(), loader.getFaces()};
+    Mesh mesh {loader.getVertices(), loader.getFaces(), color};
+    //mesh.setColor(glm::ivec3 {220, 60, 5}); hochschule farbe
     objects.push_back(mesh);
 }
 
@@ -58,9 +71,11 @@ void draw(void) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     for (Mesh mesh : objects) {
+        std::vector<unsigned int> code = generateRandomColorCode();
+        mesh.setColor(glm::ivec3 {code.at(0) , code.at(1), code.at(2)});
         mesh.draw(shaderProgram);
     }
-    
+
     /*
     float timeValue = glfwGetTime();
     float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
@@ -120,7 +135,7 @@ int main(void) {
 
 
     // set line or fill from graphic
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);

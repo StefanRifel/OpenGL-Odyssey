@@ -7,8 +7,10 @@ layout (location = 2) in vec2 aTexCoord;
 out vec3 vertexColor;
 out vec2 texCoord;
 
+uniform vec3 color;
+
 void main() {
    gl_Position = vec4(aPos, 1.0);
-   vertexColor = aColor;
+   vertexColor = color;
    texCoord = aTexCoord;
 }
