@@ -18,7 +18,7 @@ class ModelLoader {
 private:
     std::string path;
     std::vector<glm::vec3> vertices;
-    std::vector<glm::uvec3> faces;
+    std::vector<GLuint> faces;
 
 public:
     ModelLoader(std::string path);
@@ -27,7 +27,7 @@ public:
     static glm::uvec3 parseLineToFaceVector(std::string line);
 
     std::vector<glm::vec3> getVertices();
-    std::vector<glm::uvec3> getFaces();
+    std::vector<GLuint> getFaces();
     
     ~ModelLoader();
 };

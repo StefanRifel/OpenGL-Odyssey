@@ -16,7 +16,10 @@ void ModelLoader::load() {
             if (type == 'v') {
                 vertices.push_back(parseLineToVertexVector(line.substr(2, line.length())));
             } else if (type == 'f') {
-                faces.push_back(parseLineToFaceVector(line.substr(2, line.length())));
+                glm::uvec3 vec = parseLineToFaceVector(line.substr(2, line.length()));
+                faces.push_back(vec.x);
+                faces.push_back(vec.y);
+                faces.push_back(vec.z);
             } 
         }
 
@@ -42,6 +45,6 @@ std::vector<glm::vec3> ModelLoader::getVertices() {
     return vertices;
 }
 
-std::vector<glm::uvec3> ModelLoader::getFaces() {
+std::vector<GLuint> ModelLoader::getFaces() {
     return faces;
 }

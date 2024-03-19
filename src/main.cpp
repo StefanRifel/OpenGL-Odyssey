@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <iostream>
 #include "utils/Logger.hpp"
+#include "utils/ModelLoader.hpp"
 #include "shader/Shader.hpp"
+#include "geometry/Triangle.hpp"
+#include "geometry/Rectangle.hpp"
+#include "geometry/Mesh.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "include/stb_image.h"
 #include "include/glm/vec3.hpp"
 
 #include <GL/glew.h>
@@ -12,187 +14,54 @@
 
 #include <cmath>
 
-enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
+//enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
 
 Shader shaderProgram;
 Shader shaderProgram2;
 Shader shaderProgram3;
-GLuint VAO;
-GLuint VAO2;
-GLuint VAO3;
-GLuint texture1;
-GLuint texture2;
 
-void loadTexture(const char* texturePath, GLuint& texture, FileFormat format) {
-    
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    // set the texture wrapping/filtering options (on currently bound texture)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load and generate the texture
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true); // flip the y-axis during image loading
-    unsigned char *data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
+//GLuint texture1;
+//GLuint texture2;
 
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-
-    stbi_image_free(data);
-}
+std::vector<Mesh> objects;
 
 void init(void) {
     shaderProgram.createShader("../shaders/shader.vs", "../shaders/shader.fs");
     shaderProgram2.createShader("../shaders/shader.vs", "../shaders/shader2.fs");
     shaderProgram3.createShader("../shaders/shader.vs", "../shaders/shader3.fs");
 
-    // create triangle buffer
-    GLfloat vertices[] = {
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,// top right
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
-        //-0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top left
-    };
+    //loadTexture("../assets/wall.jpg", texture1, jpg);
+    //loadTexture("../assets/awesomeface.png", texture2, png);
 
-    GLuint indices[] = { // note that we start from 0!
-        0, 1, 3, // first triangle
-        1, 2, 3, // second triangle
-    };
+    glm::vec3 a {-1.0f, 1.0f, 0.0f};
+    glm::vec3 b {1.0f, 1.0f, 0.0};
+    glm::vec3 c {0.0f, 0.6f, 0.0};
+    
+    glm::vec3 r1 {-1.0f, -1.0f, 0.0f};
+    glm::vec3 r2 {-1.0f,  0.0f, 0.0f};
+    glm::vec3 r3 {0.0f,  0.0f, 0.0f};
+    glm::vec3 r4 {0.0f, -1.0f, 0.0f};
+    
+    Triangle triangle {a, b, c};
 
+    Rectangle rectangle {r1, r2, r3, r4};
 
-    GLfloat rectangleVertices [] = {
-        // position       , colors          , texture coordinates
-        //  X,     Y,    Z,    R,    G,    B,    S,    T
-        -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, //left-bottom
-        -1.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, //left-top
-         0.0f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, //right-top
-         0.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //right-bottom
-    };
+    ModelLoader loader {"../assets/models/hsh_logo.txt"};
+    loader.load();
 
-    GLfloat trigVertices[] = {
-        -1.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f,
-        0.0f, 0.6f, 0.0f
-    };
-
-    GLfloat textureCordinates[] = {
-        0.0f, 0.0f,
-        2.0f, 0.0f,
-        0.5f, 1.0f
-    };
-
-    //VBO
-    GLuint VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    //VBO2
-    GLuint VBO2;
-    glGenBuffers(1, &VBO2);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(trigVertices), trigVertices, GL_STATIC_DRAW);
-    //VBO3
-    GLuint VBO3;
-    glGenBuffers(1, &VBO3);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO3);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
-
-    //VAO
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(
-        0, 
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        6 * sizeof(GL_FLOAT),
-        (void*)0
-    );
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(
-        1, 
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        6 * sizeof(GL_FLOAT),
-        (void*)(3 * sizeof(GL_FLOAT))
-    );
-    glEnableVertexAttribArray(1);
-    //VAO2
-    glGenVertexArrays(1, &VAO2);
-    glBindVertexArray(VAO2);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-    glVertexAttribPointer(
-        0, 
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        3 * sizeof(float),
-        (void*)0
-    );
-    glEnableVertexAttribArray(0);
-    //VAO3
-    glGenVertexArrays(1, &VAO3);
-    glBindVertexArray(VAO3);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO3);
-    glVertexAttribPointer(
-        0,                  // location attribute number in vertex shader             
-        3,                  // size of the vertex attribute
-        GL_FLOAT,           // type of the data
-        GL_FALSE,           // if we want the data to be normalized
-        8 * sizeof(float),  // stride and tells us the space between consecutive vertex attributes
-        (void*)0            // offset of where the position data begins in the buffer
-    );
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(
-        1, 
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        8 * sizeof(float),
-        (void*)(sizeof(float) * 3)
-    );
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(
-        2, 
-        2, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        8 * sizeof(float),
-        (void*)(sizeof(float) * 6)
-    );
-    glEnableVertexAttribArray(2);
-
-    loadTexture("../assets/wall.jpg", texture1, jpg);
-    loadTexture("../assets/awesomeface.png", texture2, png);
-
-    //EBO
-    GLuint EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    Mesh mesh {loader.getVertices(), loader.getFaces()};
+    objects.push_back(mesh);
 }
 
 void draw(void) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // draw first triangle
-    shaderProgram.use();
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // draw secound triangle
-    shaderProgram2.use();
+    for (Mesh mesh : objects) {
+        mesh.draw(shaderProgram);
+    }
     
+    /*
     float timeValue = glfwGetTime();
     float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
     int vertexColorLocation = glGetUniformLocation(shaderProgram2.ID, "ourColor");
@@ -201,11 +70,9 @@ void draw(void) {
         std::cout << vertexColorLocation << std::endl;
     }  
     glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+    */
 
-    // render step
-    glBindVertexArray(VAO2);
-    glDrawArrays(GL_TRIANGLES, 0 , 3);
-
+    /*
     // rectangle
     shaderProgram3.use();
     shaderProgram3.setInt("texture1", 0);
@@ -216,8 +83,7 @@ void draw(void) {
     glActiveTexture(GL_TEXTURE1); // activate texture unit first
     glBindTexture(GL_TEXTURE_2D, texture2);
     glBindVertexArray(VAO3);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    */
     
 }
 
@@ -252,8 +118,9 @@ int main(void) {
 
     init();
 
+
     // set line or fill from graphic
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
