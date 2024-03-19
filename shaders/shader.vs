@@ -9,9 +9,10 @@ out vec2 texCoord;
 
 uniform vec3 color;
 uniform vec2 position;
+uniform mat4 transform;
 
 void main() {
-   gl_Position = vec4(aPos.x + position.x, aPos.y + position.y, aPos.y, 1.0);
+   gl_Position = transform * vec4(aPos.x + position.x, aPos.y + position.y, aPos.y, 1.0);
    vertexColor = color;
    texCoord = aTexCoord;
 }

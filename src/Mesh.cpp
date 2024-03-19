@@ -62,6 +62,14 @@ void Mesh::draw(Shader shader) const {
     float vertexPositionLocation = glGetUniformLocation(shader.ID, "position");
     glUniform2f(vertexPositionLocation, this->position.x, this->position.y);
 
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+    trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+
+    unsigned int transformLoc = glGetUniformLocation(shader.ID,"transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
 

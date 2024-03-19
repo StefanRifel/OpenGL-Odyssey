@@ -8,6 +8,10 @@
 #include "../include/glm/vec2.hpp"
 #include "../geometry/Vertex.h"
 
+#include "../include/glm/glm.hpp"
+#include "../include/glm/gtc/matrix_transform.hpp"
+#include "../include/glm/gtc/type_ptr.hpp"
+
 class Mesh {
 
 private:

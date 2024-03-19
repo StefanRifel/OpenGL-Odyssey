@@ -112,7 +112,6 @@ int main(void) {
 
     init();
 
-
     // set line or fill from graphic
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
