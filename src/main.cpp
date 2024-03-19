@@ -15,14 +15,7 @@
 #include <cmath>
 #include <ctime>
 
-//enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
-
 Shader shaderProgram;
-Shader shaderProgram2;
-Shader shaderProgram3;
-
-//GLuint texture1;
-//GLuint texture2;
 
 std::vector<Mesh> objects;
 float winkel {0};
@@ -49,11 +42,6 @@ glm::vec2 calcPointOnCircle(float radius) {
 
 void init(void) {
     shaderProgram.createShader("../shaders/shader.vs", "../shaders/shader.fs");
-    shaderProgram2.createShader("../shaders/shader.vs", "../shaders/shader2.fs");
-    shaderProgram3.createShader("../shaders/shader.vs", "../shaders/shader3.fs");
-
-    //loadTexture("../assets/wall.jpg", texture1, jpg);
-    //loadTexture("../assets/awesomeface.png", texture2, png);
 
     glm::vec3 color {0.4f, 0.2f, 0.5f};
 
@@ -91,20 +79,6 @@ void draw(void) {
         mesh.changePosition(glm::vec2 {position.x, position.y});
         mesh.draw(shaderProgram);
     }
-
-    /*
-    // rectangle
-    shaderProgram3.use();
-    shaderProgram3.setInt("texture1", 0);
-    shaderProgram3.setInt("texture2", 1); 
-    
-    glActiveTexture(GL_TEXTURE0); // activate texture unit first
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    glActiveTexture(GL_TEXTURE1); // activate texture unit first
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    glBindVertexArray(VAO3);
-    */
-    
 }
 
 void processInput(GLFWwindow *window) {

@@ -6,12 +6,16 @@
 #include <vector>
 #include "../include/glm/vec3.hpp"
 
+enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
+
 class Rectangle {
 
 private:
     GLuint VAO, VBO, EBO;
     std::vector<glm::vec3> vertices;
     std::vector<GLuint> indices;
+    GLuint texture1;
+    GLuint texture2;
 
 public:
     Rectangle();
@@ -19,6 +23,7 @@ public:
     ~Rectangle();
     void init();
     void draw(Shader shader) const;
+    void loadTexture(const char* texturePath, GLuint& texture, FileFormat format);
 };
 
 #endif

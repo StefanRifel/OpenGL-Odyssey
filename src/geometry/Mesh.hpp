@@ -8,8 +8,6 @@
 #include "../include/glm/vec2.hpp"
 #include "../geometry/Vertex.h"
 
-enum FileFormat {jpg = GL_RGB, png = GL_RGBA};
-
 class Mesh {
 
 private:
@@ -27,7 +25,6 @@ public:
     void draw(Shader shader) const;
     void setColor(glm::ivec3 color);
     void changePosition(glm::vec2 position);
-    void loadTexture(const char* texturePath, GLuint& texture, FileFormat format);
 };
 
 #endif
