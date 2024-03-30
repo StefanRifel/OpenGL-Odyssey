@@ -65,7 +65,7 @@ void init(void) {
     //mesh.setColor(glm::ivec3 {220, 60, 5}); hochschule farbe
     objects.push_back(mesh);
 
-    calcPointOnCircle(0.3);
+    calcPointOnCircle(0.5);
 }
 
 void draw(void) {
