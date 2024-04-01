@@ -6,6 +6,7 @@
 #include "geometry/Triangle.hpp"
 #include "geometry/Rectangle.hpp"
 #include "geometry/Mesh.hpp"
+#include "geometry/TriangleStrip.hpp"
 
 #include "include/glm/vec3.hpp"
 
@@ -16,9 +17,12 @@
 #include <ctime>
 
 Shader shaderProgram;
+Shader triangleStripShaderProgram;
 
 std::vector<Mesh> objects;
 float winkel {0};
+
+std::vector<TriangleStrip> tsObjects;
 
 std::vector<unsigned int> generateRandomColorCode() {
     std::vector<unsigned int> colorCode;
@@ -42,6 +46,7 @@ glm::vec2 calcPointOnCircle(float radius) {
 
 void init(void) {
     shaderProgram.createShader("../shaders/shader.vs", "../shaders/shader.fs");
+    triangleStripShaderProgram.createShader("../shaders/triangleStripShader.vs", "../shaders/triangleStripShader.fs");
 
     glm::vec3 color {0.4f, 0.2f, 0.5f};
 
@@ -49,14 +54,41 @@ void init(void) {
     glm::vec3 b {1.0f, 1.0f, 0.0};
     glm::vec3 c {0.0f, 0.6f, 0.0};
     
-    glm::vec3 r1 {-1.0f, -1.0f, 0.0f};
-    glm::vec3 r2 {-1.0f,  0.0f, 0.0f};
-    glm::vec3 r3 {0.0f,  0.0f, 0.0f};
-    glm::vec3 r4 {0.0f, -1.0f, 0.0f};
+    glm::vec3 r1 {-1.0f, 0.2f, 0.0f};
+    glm::vec3 r2 {-1.0f, -0.2f, 0.0f};
+    glm::vec3 r3 {1.0f,  0.2f, 0.0f};
+    glm::vec3 r4 {1.0f, -0.2f, 0.0f};
     
     Triangle triangle {a, b, c};
 
     Rectangle rectangle {r1, r2, r3, r4};
+
+
+
+    std::vector<glm::vec3> verticesvec;
+    verticesvec.push_back(r1);
+    verticesvec.push_back(r2); 
+    verticesvec.push_back(r3); 
+    verticesvec.push_back(r4);  
+
+    std::vector<glm::vec3> colorvec; 
+    colorvec.push_back(glm::vec3 {1.0f, 0.0f, 0.0f});
+    colorvec.push_back(glm::vec3 {1.0f, 0.0f, 0.0f}); 
+    colorvec.push_back(glm::vec3 {0.0f, 1.0f, 0.0f}); 
+    colorvec.push_back(glm::vec3 {0.0f, 1.0f, 0.0f});
+
+    std::vector<GLuint> indicesvec;
+    indicesvec.push_back(0);
+    indicesvec.push_back(1);
+    indicesvec.push_back(2);
+    indicesvec.push_back(2);
+    indicesvec.push_back(1);
+    indicesvec.push_back(3);
+
+    TriangleStrip ts {verticesvec, colorvec, indicesvec};
+    tsObjects.push_back(ts);
+
+
 
     ModelLoader loader {"../assets/models/hsh_logo.txt"};
     loader.load();
@@ -71,13 +103,17 @@ void init(void) {
 void draw(void) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
+/*
     for (Mesh mesh : objects) {
         std::vector<unsigned int> code = generateRandomColorCode();
         mesh.setColor(glm::ivec3 {code.at(0) , code.at(1), code.at(2)});
         glm::vec2 position = calcPointOnCircle(0.7f);
         mesh.changePosition(glm::vec2 {position.x, position.y});
         mesh.draw(shaderProgram);
+    }
+*/
+    for (TriangleStrip ts : tsObjects) {
+        ts.draw(triangleStripShaderProgram);
     }
 }
 
