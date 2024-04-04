@@ -11,20 +11,27 @@ void ModelLoader::load() {
     std::string line;
 
     if(modelFile.is_open()) {
+        int escape = 0;
         while (std::getline(modelFile, line)) {
             char type {line.at(0)};
             if (type == 'v') {
                 glm::vec3 vec = parseLineToVertexVector(line.substr(2, line.length()));
                 Vertex vertex;
                 vertex.position = vec;
-                vertex.color = glm::vec3 {0.8, 0.0, 0.0};
+                //vertex.color = glm::vec3 {0.8, 0.0, 0.0}; currently deleted from vertex class
                 vertices.push_back(vertex);
             } else if (type == 'f') {
                 glm::uvec3 vec = parseLineToFaceVector(line.substr(2, line.length()));
                 faces.push_back(vec.x);
                 faces.push_back(vec.y);
                 faces.push_back(vec.z);
-            } 
+                escape += 3;
+                if(escape % 6 == 0) {
+                    faces.push_back(0xFFFF);
+                    escape = 0;
+                }
+            }
+
         }
 
         modelFile.close();

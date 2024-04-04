@@ -1,23 +1,17 @@
 #ifndef TRIANGLE_HH
 #define TRIANGLE_HH
 
+#include "RenderableObject.hpp"
 
-#include "../shader/Shader.hpp"
-#include <vector>
-#include "../include/glm/vec3.hpp"
-
-class Triangle {
+class Triangle : public RenderableObject{
 
 private:
-    GLuint VAO, VBO;
-    std::vector<glm::vec3> vertices;
 
 public:
     Triangle();
-    Triangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
-    ~Triangle();
-    void init();
-    void draw(Shader shader) const;
+    Triangle(std::vector<Vertex> vertices);
+    virtual ~Triangle() override;
+    virtual void draw(Shader shader) const override;
 };
 
 #endif

@@ -1,118 +1,105 @@
-#include <stdio.h>
 #include <iostream>
-#include "utils/Logger.hpp"
-#include "utils/ModelLoader.hpp"
-#include "shader/Shader.hpp"
-#include "geometry/Triangle.hpp"
-#include "geometry/Rectangle.hpp"
-#include "geometry/Mesh.hpp"
-#include "geometry/TriangleStrip.hpp"
-#include "geometry/RectangleShaderExperiment.hpp"
 
-#include "include/glm/vec3.hpp"
+#include "shader/Shader.hpp"
+#include "utils/ModelLoader.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "geometry/Triangle.hpp"
+#include "geometry/Rectangle.hpp"
+#include "geometry/Circle.hpp"
+#include "geometry/CircleHole.hpp"
+#include "geometry/Mesh.hpp"
+
 #include <cmath>
-#include <ctime>
 
-Shader shaderProgram;
+Shader shader;
 
-std::vector<Mesh> objects;
-float winkel {0};
+std::vector<RenderableObject*> renderableObjects;
 
-std::vector<RectangleShaderExperiment> tsObjects;
-
-std::vector<unsigned int> generateRandomColorCode() {
-    std::vector<unsigned int> colorCode;
-    std::srand(std::time(nullptr));
-    for(int i = 0; i < 3; i++) {
-        colorCode.push_back(std::rand() % 255);
+std::vector<Vertex> calcCircleVertices(Vertex origin, GLfloat radius) {
+    std::vector<Vertex> circleVertices;
+    circleVertices.push_back(origin);
+    for(float angle = 360; angle >= 0; angle--) {
+        float x = (float)(radius * cos(angle * M_PI /180));
+        x += origin.position.x;
+        float y = (float)(radius * sin(angle * M_PI /180));
+        y += origin.position.y;
+        circleVertices.push_back(Vertex {glm::vec3 {x, y, 0.0f}});
     }
-    return colorCode;
+    return circleVertices;
 }
 
-glm::vec2 calcPointOnCircle(float radius) {
-    glm::vec2 koordiante;
-    if(winkel == 360) {
-        winkel = 0;
+std::vector<Vertex> calcCircleHoleVertices(Vertex origin, GLfloat innerRadius, GLfloat outerRadius) {
+    std::vector<Vertex> circleVertices;
+    for(float angle = 360; angle >= 0; angle --) {
+        float x = (float)(outerRadius * cos(angle * M_PI /180));
+        x += origin.position.x;
+        float y = (float)(outerRadius * sin(angle * M_PI /180));
+        y += origin.position.y;
+        circleVertices.push_back(Vertex {glm::vec3 {x, y, 0.0f}});
+
+        x = (float)(innerRadius * cos(angle * M_PI /180));
+        x += origin.position.x;
+        y = (float)(innerRadius * sin(angle * M_PI /180));
+        y += origin.position.y;
+        circleVertices.push_back(Vertex {glm::vec3 {x, y, 0.0f}});
     }
-    koordiante.x = (float)(radius * cos(winkel * M_PI /180));
-    koordiante.y = (float)(radius * sin(winkel * M_PI /180));
-    winkel++;
-    return koordiante;
+    return circleVertices;
 }
 
 void init(void) {
-    shaderProgram.createShader("../shaders/rectangleShaderExperiment/shader.vs", "../shaders/rectangleShaderExperiment/shader.fs");
+    shader.createShader("../shaders/triangle/shader.vs", "../shaders/triangle/shader.fs");
 
-    glm::vec3 color {0.4f, 0.2f, 0.5f};
+    std::vector<Vertex> verticesTriangle = {
+        Vertex {glm::vec3 {0.0f, 0.5f, 0.0f}},
+        Vertex {glm::vec3 {-0.5f, -0.5f, 0.0f}},
+        Vertex {glm::vec3 {0.5f, -0.5f, 0.0f}}
+    };
 
-    glm::vec3 a {-1.0f, 1.0f, 0.0f};
-    glm::vec3 b {1.0f, 1.0f, 0.0};
-    glm::vec3 c {0.0f, 0.6f, 0.0};
-    
-    glm::vec3 r1 {-1.0f, 0.2f, 0.0f};
-    glm::vec3 r2 {-1.0f, -0.2f, 0.0f};
-    glm::vec3 r3 {1.0f,  0.2f, 0.0f};
-    glm::vec3 r4 {1.0f, -0.2f, 0.0f};
-    
-    Triangle triangle {a, b, c};
+    std::vector<Vertex> verticesRectangle = {
+        Vertex {glm::vec3 {-1.0f, 1.0f, 0.0f}},
+        Vertex {glm::vec3 {-1.0f, 0.8f, 0.0f}},
+        Vertex {glm::vec3 {-0.5f, 1.0f, 0.0f}},
+        Vertex {glm::vec3 {-0.5f, 0.8f, 0.0f}}
+    };
 
-    Rectangle rectangle {r1, r2, r3, r4};
+    std::vector<GLuint> indicesRectangle = {
+        0, 1, 2,
+        2, 1, 3
+    };
 
+    std::vector<Vertex> verticesCircle {calcCircleVertices(Vertex {glm::vec3 {0.5f, 0.5f, 0.0f}}, 0.8f)};
 
-
-    std::vector<glm::vec3> verticesvec;
-    verticesvec.push_back(r1);
-    verticesvec.push_back(r2); 
-    verticesvec.push_back(r3); 
-    verticesvec.push_back(r4);  
-
-    std::vector<GLfloat> vertValue; 
-    vertValue.push_back(1.0f);
-    vertValue.push_back(1.0f); 
-    vertValue.push_back(0.0f); 
-    vertValue.push_back(0.0f);
-
-    std::vector<GLuint> indicesvec;
-    indicesvec.push_back(0);
-    indicesvec.push_back(1);
-    indicesvec.push_back(2);
-    indicesvec.push_back(2);
-    indicesvec.push_back(1);
-    indicesvec.push_back(3);
-
-    RectangleShaderExperiment ts {verticesvec, vertValue, indicesvec};
-    tsObjects.push_back(ts);
-
-
+    std::vector<Vertex> verticesCircleHole = calcCircleHoleVertices(Vertex {glm::vec3 {-0.5f, 0.5f, 0.0f}}, 0.1f, 0.3f);
 
     ModelLoader loader {"../assets/models/hsh_logo.txt"};
     loader.load();
 
-    Mesh mesh {loader.getVertices(), loader.getFaces(), color};
-    //mesh.setColor(glm::ivec3 {220, 60, 5}); hochschule farbe
-    objects.push_back(mesh);
+    Triangle* triangle = new Triangle {verticesTriangle};
 
-    calcPointOnCircle(0.5);
+    Rectangle* rectangle = new Rectangle {verticesRectangle, indicesRectangle};
+
+    Circle* circle = new Circle {verticesCircle};
+
+    CircleHole* circleHole = new CircleHole{verticesCircleHole};
+
+    Mesh* hsh = new Mesh {loader.getVertices(), loader.getFaces()};
+
+    //renderableObjects.push_back(triangle);
+    //renderableObjects.push_back(rectangle);
+    //renderableObjects.push_back(circle);
+    //renderableObjects.push_back(circleHole);
+    renderableObjects.push_back(hsh);
 }
 
 void draw(void) {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.94f, 0.93f, 0.81f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-/*
-    for (Mesh mesh : objects) {
-        std::vector<unsigned int> code = generateRandomColorCode();
-        mesh.setColor(glm::ivec3 {code.at(0) , code.at(1), code.at(2)});
-        glm::vec2 position = calcPointOnCircle(0.7f);
-        mesh.changePosition(glm::vec2 {position.x, position.y});
-        mesh.draw(shaderProgram);
-    }
-*/
-    for (RectangleShaderExperiment ts : tsObjects) {
-        ts.draw(shaderProgram);
+
+    for (RenderableObject* obj : renderableObjects) {
+        obj->draw(shader);
     }
 }
 
