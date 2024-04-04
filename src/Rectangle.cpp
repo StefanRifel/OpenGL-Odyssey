@@ -14,5 +14,5 @@ Rectangle::~Rectangle() {
 
 void Rectangle::draw(Shader shader) const {
     RenderableObject::draw(shader);
-    glDrawElements(GL_TRIANGLES, getIndicesSize(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLE_STRIP, getIndicesSize(), GL_UNSIGNED_INT, 0);
 }

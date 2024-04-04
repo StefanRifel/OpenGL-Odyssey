@@ -66,17 +66,18 @@ void init(void) {
         Vertex {glm::vec3 {-1.0f, 1.0f, 0.0f}},
         Vertex {glm::vec3 {-1.0f, 0.8f, 0.0f}},
         Vertex {glm::vec3 {-0.5f, 1.0f, 0.0f}},
-        Vertex {glm::vec3 {-0.5f, 0.8f, 0.0f}}
+        Vertex {glm::vec3 {-0.5f, 0.8f, 0.0f}},
+        
     };
 
     std::vector<GLuint> indicesRectangle = {
         0, 1, 2,
-        2, 1, 3
+        3, 2, 1
     };
 
     std::vector<Vertex> verticesCircle {calcCircleVertices(Vertex {glm::vec3 {0.5f, 0.5f, 0.0f}}, 0.8f)};
 
-    std::vector<Vertex> verticesCircleHole = calcCircleHoleVertices(Vertex {glm::vec3 {-0.5f, 0.5f, 0.0f}}, 0.1f, 0.3f);
+    std::vector<Vertex> verticesCircleHole = calcCircleHoleVertices(Vertex {glm::vec3 {-0.5f, 0.5f, 0.0f}}, 0.1f, 0.5f);
 
     ModelLoader loader {"../assets/models/hsh_logo.txt"};
     loader.load();
@@ -92,14 +93,15 @@ void init(void) {
     Circle* circle = new Circle {verticesCircle};
 
     CircleHole* circleHole = new CircleHole{verticesCircleHole};
+    circleHole->setColor(differentColor);
 
     Mesh* hsh = new Mesh {loader.getVertices(), loader.getFaces()};
     hsh->setColor(color);
 
     //renderableObjects.push_back(triangle);
-    //renderableObjects.push_back(rectangle);
+    renderableObjects.push_back(rectangle);
     //renderableObjects.push_back(circle);
-    //renderableObjects.push_back(circleHole);
+    renderableObjects.push_back(circleHole);
     renderableObjects.push_back(hsh);
 }
 

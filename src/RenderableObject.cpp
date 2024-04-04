@@ -74,6 +74,7 @@ void RenderableObject::draw(Shader shader) const {
 
     float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
     glUniform3f(vertexFragColor, color.r, color.g, color.b);
+    glEnable(GL_CULL_FACE);
 }
 
 void RenderableObject::setColor(glm::ivec3 color) {
