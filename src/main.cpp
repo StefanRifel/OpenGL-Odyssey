@@ -50,7 +50,8 @@ std::vector<Vertex> calcCircleHoleVertices(Vertex origin, GLfloat innerRadius, G
 }
 
 void init(void) {
-    shader.createShader("../shaders/triangle/shader.vs", "../shaders/triangle/shader.fs");
+    shader.createShader("../shaders/shader.vs", "../shaders/shader.fs");
+
 
     glm::ivec3 color {255, 112, 112};
     glm::ivec3 differentColor {57, 36, 103};
@@ -86,17 +87,20 @@ void init(void) {
 
     Rectangle* rectangle = new Rectangle {verticesRectangle, indicesRectangle};
 
+    rectangle->setColor(color);
+
     Circle* circle = new Circle {verticesCircle};
 
     CircleHole* circleHole = new CircleHole{verticesCircleHole};
 
     Mesh* hsh = new Mesh {loader.getVertices(), loader.getFaces()};
+    hsh->setColor(color);
 
-    renderableObjects.push_back(triangle);
+    //renderableObjects.push_back(triangle);
     //renderableObjects.push_back(rectangle);
     //renderableObjects.push_back(circle);
     //renderableObjects.push_back(circleHole);
-    //renderableObjects.push_back(hsh);
+    renderableObjects.push_back(hsh);
 }
 
 void draw(void) {
