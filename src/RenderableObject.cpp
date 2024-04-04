@@ -1,14 +1,23 @@
 #include "geometry/RenderableObject.hpp"
 
-RenderableObject::RenderableObject() : color {0.0f, 0.0f, 1.0f} {
+RenderableObject::RenderableObject() : color {0.04f, 0.38f, 0.69f} {
     init();
 }
 
-RenderableObject::RenderableObject(std::vector<Vertex> vertices) : color {0.0f, 0.0f, 1.0f}, vertices {vertices} {
+RenderableObject::RenderableObject(std::vector<Vertex> vertices) : color {0.04f, 0.38f, 0.69f}, vertices {vertices} {
     init();
 }
 
-RenderableObject::RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices) : color {0.0f, 0.0f, 1.0f}, vertices {vertices}, indices {indices} {
+RenderableObject::RenderableObject(std::vector<Vertex> vertices, glm::ivec3 color) : color {0.04f, 0.38f, 0.69f}, vertices {vertices} {
+    setColor(color);
+    init();
+}
+
+RenderableObject::RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices) : color {0.04f, 0.38f, 0.69f}, vertices {vertices}, indices {indices} {
+    init();
+}
+
+RenderableObject::RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices, glm::ivec3 color) : color {color}, vertices {vertices}, indices {indices} {
     init();
 }
 
@@ -17,15 +26,15 @@ RenderableObject::~RenderableObject() {
 }
 
 void RenderableObject::init() {
-    //VBO
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &(vertices[0]), GL_STATIC_DRAW);
-
-    //VAO
+    // VAO
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    // VBO for Position
+    glGenBuffers(1, &PVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, PVBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &(vertices[0]), GL_STATIC_DRAW);
+
     glVertexAttribPointer(
         0,                      // location attribute number in vertex shader  
         3,                      // size of the vertex attribute
@@ -35,6 +44,21 @@ void RenderableObject::init() {
         (void*)0                // offset of where the position data begins in the buffer
     );
     glEnableVertexAttribArray(0);
+
+    // VBO for Color
+    glGenBuffers(1, &CVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, CVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color), &color, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(
+        1,                      
+        3,                    
+        GL_FLOAT,              
+        GL_FALSE,            
+        sizeof(color),        
+        (void*)0  
+    );
+    glEnableVertexAttribArray(1);
 
     if(indices.size() != 0) {
         //EBO
@@ -47,6 +71,9 @@ void RenderableObject::init() {
 void RenderableObject::draw(Shader shader) const {
     shader.use();
     glBindVertexArray(VAO);
+
+    float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
+    glUniform3f(vertexFragColor, color.r, color.g, color.b);
 }
 
 void RenderableObject::setColor(glm::ivec3 color) {

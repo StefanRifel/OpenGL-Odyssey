@@ -11,7 +11,7 @@
 class RenderableObject {
 
 private:
-    GLuint VAO, VBO, EBO;
+    GLuint VAO, PVBO, CVBO, EBO;
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
     glm::vec3 color;
@@ -19,12 +19,14 @@ private:
 public:
     RenderableObject();
     RenderableObject(std::vector<Vertex> vertices);
+    RenderableObject(std::vector<Vertex> vertices, glm::ivec3 color);
     RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices);
+    RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices, glm::ivec3 color);
     virtual ~RenderableObject();
     virtual void draw(Shader shader) const;
     void setColor(glm::ivec3 color);
 
-    
+
     const std::size_t getIndicesSize() const;
     const std::size_t getVerticiesSize() const;
 
