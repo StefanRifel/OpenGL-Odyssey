@@ -2,6 +2,7 @@
 
 #include "shader/Shader.hpp"
 #include "utils/ModelLoader.hpp"
+#include "utils/Transformation.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -99,9 +100,9 @@ void init(void) {
     hsh->setColor(color);
 
     //renderableObjects.push_back(triangle);
-    renderableObjects.push_back(rectangle);
+    //renderableObjects.push_back(rectangle);
     //renderableObjects.push_back(circle);
-    renderableObjects.push_back(circleHole);
+    //renderableObjects.push_back(circleHole);
     renderableObjects.push_back(hsh);
 }
 
