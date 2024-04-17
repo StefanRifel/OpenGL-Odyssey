@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "../include/glm/vec3.hpp"
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "../geometry/Vertex.h"
@@ -29,8 +27,6 @@ private:
 public:
     ModelLoader();
     static bool load(const char* path, std::vector<Vertex>& outVertices, std::vector<GLuint>& outFaces);
-    static glm::vec3 parseLineToVertexVector(std::string line);
-    static glm::uvec3 parseLineToFaceVector(std::string line);
     
     ~ModelLoader();
 };

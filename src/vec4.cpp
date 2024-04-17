@@ -8,10 +8,6 @@ vec4::vec4(float x, float y, float z, float w) : vector {x, y, z, w} {
 
 }
 
-vec4::vec4(float r, float g, float b, float a) : vector {r, g, b, a} {
-
-}
-
 vec4::vec4(const vec4& v) {
     *this = v;
 }
@@ -62,12 +58,12 @@ std::ostream& operator << (std::ostream& out, const vec4& v) {
 }
 
 vec4& vec4::operator= (const vec4& v) {
-    if(this == &v) {
-        return *this;
-    }
+    if(this == &v) return *this;
+
     for(int i = 0; i < N; i++) {
         vector[i] = v.vector[i]; 
     }
+    
     return *this;
 }
 

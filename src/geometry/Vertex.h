@@ -1,10 +1,10 @@
 #ifndef VERTEX_HH
 #define VERTEX_HH
 
-#include "../include/glm/vec3.hpp"
+#include "../utils/vec3.hpp"
 
 typedef struct {
-    glm::vec3 position;
+    vec3 position;
 } Vertex;
 
 #endif

@@ -4,6 +4,7 @@
 #include "utils/ModelLoader.hpp"
 #include "utils/Transformation.hpp"
 #include "utils/vec3.hpp"
+#include "utils/mat4.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -25,10 +26,10 @@ std::vector<Vertex> calcCircleVertices(Vertex origin, GLfloat radius) {
     circleVertices.push_back(origin);
     for(float angle = 360; angle >= 0; angle--) {
         float x = (float)(radius * cos(angle * M_PI /180));
-        x += origin.position.x;
+        x += origin.position.x();
         float y = (float)(radius * sin(angle * M_PI /180));
-        y += origin.position.y;
-        circleVertices.push_back(Vertex {glm::vec3 {x, y, 0.0f}});
+        y += origin.position.y();
+        circleVertices.push_back(Vertex {vec3 {x, y, 0.0f}});
     }
     return circleVertices;
 }
@@ -37,16 +38,16 @@ std::vector<Vertex> calcCircleHoleVertices(Vertex origin, GLfloat innerRadius, G
     std::vector<Vertex> circleVertices;
     for(float angle = 360; angle >= 0; angle --) {
         float x = (float)(outerRadius * cos(angle * M_PI /180));
-        x += origin.position.x;
+        x += origin.position.x();
         float y = (float)(outerRadius * sin(angle * M_PI /180));
-        y += origin.position.y;
-        circleVertices.push_back(Vertex {glm::vec3 {x, y, 0.0f}});
+        y += origin.position.y();
+        circleVertices.push_back(Vertex {vec3 {x, y, 0.0f}});
 
         x = (float)(innerRadius * cos(angle * M_PI /180));
-        x += origin.position.x;
+        x += origin.position.x();
         y = (float)(innerRadius * sin(angle * M_PI /180));
-        y += origin.position.y;
-        circleVertices.push_back(Vertex {glm::vec3 {x, y, 0.0f}});
+        y += origin.position.y();
+        circleVertices.push_back(Vertex {vec3 {x, y, 0.0f}});
     }
     return circleVertices;
 }
@@ -55,20 +56,20 @@ void init(void) {
     shader.createShader("../shaders/shader.vs", "../shaders/shader.fs");
 
 
-    glm::ivec3 color {255, 112, 112};
-    glm::ivec3 differentColor {57, 36, 103};
+    vec3 color {255, 112, 112};
+    vec3 differentColor {57, 36, 103};
 
     std::vector<Vertex> verticesTriangle = {
-        Vertex {glm::vec3 {0.0f, 0.5f, 0.0f}},
-        Vertex {glm::vec3 {-0.5f, -0.5f, 0.0f}},
-        Vertex {glm::vec3 {0.5f, -0.5f, 0.0f}}
+        Vertex {vec3 {0.0f, 0.5f, 0.0f}},
+        Vertex {vec3 {-0.5f, -0.5f, 0.0f}},
+        Vertex {vec3 {0.5f, -0.5f, 0.0f}}
     };
 
     std::vector<Vertex> verticesRectangle = {
-        Vertex {glm::vec3 {-1.0f, 1.0f, 0.0f}},
-        Vertex {glm::vec3 {-1.0f, 0.8f, 0.0f}},
-        Vertex {glm::vec3 {-0.5f, 1.0f, 0.0f}},
-        Vertex {glm::vec3 {-0.5f, 0.8f, 0.0f}},
+        Vertex {vec3 {-1.0f, 1.0f, 0.0f}},
+        Vertex {vec3 {-1.0f, 0.8f, 0.0f}},
+        Vertex {vec3 {-0.5f, 1.0f, 0.0f}},
+        Vertex {vec3 {-0.5f, 0.8f, 0.0f}},
         
     };
 
@@ -77,9 +78,9 @@ void init(void) {
         3, 2, 1
     };
 
-    std::vector<Vertex> verticesCircle {calcCircleVertices(Vertex {glm::vec3 {0.5f, 0.5f, 0.0f}}, 0.8f)};
+    std::vector<Vertex> verticesCircle {calcCircleVertices(Vertex {vec3 {0.5f, 0.5f, 0.0f}}, 0.8f)};
 
-    std::vector<Vertex> verticesCircleHole = calcCircleHoleVertices(Vertex {glm::vec3 {-0.5f, 0.5f, 0.0f}}, 0.1f, 0.5f);
+    std::vector<Vertex> verticesCircleHole = calcCircleHoleVertices(Vertex {vec3 {-0.5f, 0.5f, 0.0f}}, 0.1f, 0.5f);
 
     Triangle* triangle = new Triangle {verticesTriangle, color};
 
@@ -127,7 +128,6 @@ void init(void) {
         std::cout << i.position.x << " " << i.position.y << " " << i.position.z << std::endl;
     }
 */
-
 }
 
 void draw(void) {

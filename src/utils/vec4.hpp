@@ -13,7 +13,6 @@ private:
 public:
     vec4();
     vec4(float x, float y, float z, float w);
-    vec4(float r, float g, float b, float a);
     vec4(const vec4& v);
     ~vec4();
 

@@ -8,7 +8,7 @@ RenderableObject::RenderableObject(std::vector<Vertex> vertices) : color {0.04f,
     init();
 }
 
-RenderableObject::RenderableObject(std::vector<Vertex> vertices, glm::ivec3 color) : color {0.04f, 0.38f, 0.69f}, vertices {vertices} {
+RenderableObject::RenderableObject(std::vector<Vertex> vertices, vec3 color) : color {0.04f, 0.38f, 0.69f}, vertices {vertices} {
     setColor(color);
     init();
 }
@@ -17,7 +17,7 @@ RenderableObject::RenderableObject(std::vector<Vertex> vertices, std::vector<GLu
     init();
 }
 
-RenderableObject::RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices, glm::ivec3 color) : color {color}, vertices {vertices}, indices {indices} {
+RenderableObject::RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices, vec3 color) : color {color}, vertices {vertices}, indices {indices} {
     init();
 }
 
@@ -73,7 +73,7 @@ void RenderableObject::draw(Shader shader) const {
     glBindVertexArray(VAO);
 
     float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
-    glUniform3f(vertexFragColor, color.r, color.g, color.b);
+    glUniform3f(vertexFragColor, color.r(), color.g(), color.b());
 /*
     std::cout << "--------Start--------" << std::endl;
     std::cout << "--------Scale--------" << std::endl;
@@ -137,10 +137,10 @@ void RenderableObject::draw(Shader shader) const {
     glEnable(GL_CULL_FACE);
 }
 
-void RenderableObject::setColor(glm::ivec3 color) {
-    this->color.x = ((100.0f / 255) * color.x) / 100;
-    this->color.y = ((100.0f / 255) * color.y) / 100;
-    this->color.z = ((100.0f / 255) * color.z) / 100;
+void RenderableObject::setColor(vec3 color) {
+    this->color.x() = ((100.0f / 255) * color.x()) / 100;
+    this->color.y() = ((100.0f / 255) * color.y()) / 100;
+    this->color.z() = ((100.0f / 255) * color.z()) / 100;
 }
 
 const std::size_t RenderableObject::getIndicesSize() const {

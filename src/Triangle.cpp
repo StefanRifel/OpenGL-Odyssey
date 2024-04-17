@@ -7,7 +7,7 @@ Triangle::Triangle(std::vector<Vertex> vertices) : RenderableObject {vertices} {
 
 }
 
-Triangle::Triangle(std::vector<Vertex> vertices, glm::ivec3 color) : RenderableObject {vertices, color} {
+Triangle::Triangle(std::vector<Vertex> vertices, vec3 color) : RenderableObject {vertices, color} {
 
 }
 

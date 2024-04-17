@@ -18,7 +18,7 @@ bool ModelLoader::load(const char* path, std::vector<Vertex>& outVertices, std::
             getline(test, token, ' ');
             if (token.at(0) == 'v' && token.size() <= 1) {
                 Vertex vertex;
-                sscanf((line.substr(2, line.length())).c_str(), "%f %f %f", &(vertex.position.x), &(vertex.position.y), &(vertex.position.z));
+                sscanf((line.substr(2, line.length())).c_str(), "%f %f %f", &(vertex.position.x()), &(vertex.position.y()), &(vertex.position.z()));
                 outVertices.push_back(vertex);
             } else if (token.at(0) == 'f' && token.size() <= 1) {
                 std::string token;
@@ -34,10 +34,4 @@ bool ModelLoader::load(const char* path, std::vector<Vertex>& outVertices, std::
         return false;
     }
     return true;
-}
-
-glm::uvec3 ModelLoader::parseLineToFaceVector(std::string line) {
-    glm::uvec3 vec;
-    
-    return vec;
 }

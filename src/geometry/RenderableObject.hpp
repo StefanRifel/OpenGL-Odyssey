@@ -15,17 +15,17 @@ private:
     GLuint VAO, PVBO, CVBO, EBO;
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
-    glm::vec3 color;
+    vec3 color;
     void init();
 public:
     RenderableObject();
     RenderableObject(std::vector<Vertex> vertices);
-    RenderableObject(std::vector<Vertex> vertices, glm::ivec3 color);
+    RenderableObject(std::vector<Vertex> vertices, vec3 color);
     RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices);
-    RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices, glm::ivec3 color);
+    RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices, vec3 color);
     virtual ~RenderableObject();
     virtual void draw(Shader shader) const;
-    void setColor(glm::ivec3 color);
+    void setColor(vec3 color);
     void setPosition(GLfloat* transformMatrix, GLuint shaderID) const;
 
     const std::vector<Vertex>& getVertices() const;
