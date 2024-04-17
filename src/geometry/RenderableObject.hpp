@@ -5,6 +5,7 @@
 #include "../geometry/Vertex.h"
 #include "../shader/Shader.hpp"
 #include "../utils/Transformation.hpp"
+#include "../utils/mat4.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>

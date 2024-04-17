@@ -68,73 +68,28 @@ void RenderableObject::init() {
     }
 }
 
-void RenderableObject::draw(Shader shader) const {
+    void RenderableObject::draw(Shader shader) const {
     shader.use();
     glBindVertexArray(VAO);
 
     float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
     glUniform3f(vertexFragColor, color.r(), color.g(), color.b());
-/*
-    std::cout << "--------Start--------" << std::endl;
-    std::cout << "--------Scale--------" << std::endl;
-*/
-    GLfloat in[16];
-    Transformation::identity(in);
 
-    GLfloat rotateResultx[16] = {0.0f};
-    Transformation::rotateX(rotateResultx, in, 75);
-    //Transformation::printM4x4(rotateResultx, "first rotation z result");
+    mat4 transform;
+    Transformation::identity(transform);
 
-    GLfloat rotateResulty[16] = {0.0f};
-    Transformation::rotateY(rotateResulty, rotateResultx, 25);
-    //Transformation::printM4x4(rotateResult1, "first rotation z result");
-
-    GLfloat scaleResult1[16] = {0.0f};
-    GLfloat scaleV1[3] = {
-        0.5f, 0.5f, 0.5f // x, y, z
-    };
-
-    Transformation::scale(scaleResult1, rotateResulty, scaleV1);
-    /*
-    Transformation::printM4x4(scaleResult1, "first scale result");
-
-    GLfloat scaleResult2[16] = {0.0f};
-    GLfloat scaleV2[3] = {
-        0.8f, 0.3f, 1.0f
-    };
-    Transformation::scale(scaleResult2, scaleResult1, scaleV2);
-    Transformation::printM4x4(scaleResult2, "secound scale result");
-
-    std::cout << "--------RotateZ--------" << std::endl;
+    vec3 scale {0.5f, 0.5f, 1.0f};
+    vec3 translate { 0.3f, 0.2f, 0.0f};
     
-    GLfloat rotateResult1[16] = {0.0f};
-    Transformation::rotateZ(rotateResult1, scaleResult2, 30);
-    Transformation::printM4x4(rotateResult1, "first rotation z result");
-    
-    std::cout << "--------Translate--------" << std::endl;
-    
-    GLfloat translateResult1[16] = {0.0f};
-    GLfloat translateV1[3] = {
-        0.3f, 0.2f, 0.0f // x, y, z
-    };
-    Transformation::translate(translateResult1, rotateResult1, translateV1);
-    Transformation::printM4x4(translateResult1, "first translation result");
+    transform = Transformation::scale(transform, scale);
+    transform = Transformation::rotateY(transform, 70);
+    transform = Transformation::rotateZ(transform, 30);
+    transform = Transformation::translate(transform, translate);
 
-    GLfloat translateResult2[16] = {0.0f};
-    GLfloat translateV2[3] = {
-        0.1f, 0.3f, 0.0f
-    };
-    Transformation::translate(translateResult2, translateResult1, translateV2);
-    Transformation::printM4x4(translateResult2, "first translation result");
-
-    std::cout << "--------End--------" << std::endl;
-
-    //Transformation::rotateZ(out, in, 60);
-    */
     float vertexTransform = glGetUniformLocation(shader.ID, "transform");
-    glUniformMatrix4fv(vertexTransform, 1, GL_FALSE, scaleResult1);
-    
-    glEnable(GL_CULL_FACE);
+    glUniformMatrix4fv(vertexTransform, 1, GL_FALSE, transform.valuePtr());
+
+    //glEnable(GL_CULL_FACE);
 }
 
 void RenderableObject::setColor(vec3 color) {

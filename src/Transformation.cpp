@@ -2,123 +2,98 @@
 #include <iostream>
 #include <cmath>
 
-void Transformation::identity(GLfloat* out) {
-    int i = 0;
-    for(GLfloat* ptr = out; ptr < out + 16; ptr++) {
-        if(i % 5 == 0) {
-            *ptr = 1.0f;
-            i = 0;
-        } else {
-            *ptr = 0.0f;
-        }
-        i++;
-    }
-}
-
-void Transformation::translate(GLfloat* out, GLfloat* in, GLfloat* v) {
-    GLfloat translationMatrix[16];
-    Transformation::identity(translationMatrix);
-    translationMatrix[12] = v[0];  
-    translationMatrix[13] = v[1];
-    translationMatrix[14] = v[2];
-
-    for (size_t y = 0; y < 4; y++) {
-        for (size_t x = 0; x < 4; x++) {
-            for (size_t i = 0; i < 4; i++) {
-                out[y + (x * 4)] += translationMatrix[y + (i * 4)] * in[i +(x * 4)];
-            }
+void Transformation::identity(mat4& out) {
+    for (int x = 0; x < MAT_N; x++) {
+        for (int y = 0; y < MAT_N; y++) {
+            x == y ? out[x][y] = 1.0f : out[x][y] = 0.0f;
         }
     }
 }
 
-void Transformation::scale(GLfloat* out, GLfloat* in, GLfloat* v) {
-    GLfloat scaleMatrix[16];
-    Transformation::identity(scaleMatrix);
-    scaleMatrix[0] = v[0];  
-    scaleMatrix[5] = v[1];
-    scaleMatrix[10] = v[2];
+mat4 Transformation::translate(mat4& in, vec3& v) {
+    /*
+        create translation Matrix:
+        | 1  0  0 Tx |
+        | 0  1  0 Ty |
+        | 0  0  1 Tz |
+        | 0  0  0  1 |
+    */
+    mat4 translationMatrix {1.0f};
+    translationMatrix[0][3] = v.x();  
+    translationMatrix[1][3] = v.y();
+    translationMatrix[2][3] = v.z();
 
-    for (size_t y = 0; y < 4; y++) {
-        for (size_t x = 0; x < 4; x++) {
-            for (size_t i = 0; i < 4; i++) {
-                out[y + (x * 4)] += scaleMatrix[y + (i * 4)] * in[i +(x * 4)];
-            }
-        }
-    }
+    return in * translationMatrix;
 }
 
-void Transformation::rotateZ(GLfloat* out, GLfloat* in, GLuint angle) {
-    GLfloat rotateMatrix[16];
-    Transformation::identity(rotateMatrix);
-    GLfloat radiant = angle * M_PI /180;
-    rotateMatrix[0] = cos(radiant);  
-    rotateMatrix[1] = sin(radiant);
-    rotateMatrix[4] = -sin(radiant);
-    rotateMatrix[5] = cos(radiant);
+mat4 Transformation::scale(mat4& in, vec3& v) {
+    /*
+        create scale Matrix:
+        | S1   0   0   0 |
+        |  0  S2   0   0 |
+        |  0   0  S3   0 |
+        |  0   0   0   1 |
+    */
+    mat4 scaleMatrix {1.0f};
+    scaleMatrix[0][0] = v.x();  
+    scaleMatrix[1][1] = v.y();
+    scaleMatrix[2][2] = v.z();
 
-    for (size_t y = 0; y < 4; y++) {
-        for (size_t x = 0; x < 4; x++) {
-            for (size_t i = 0; i < 4; i++) {
-                out[y + (x * 4)] += rotateMatrix[y + (i * 4)] * in[i +(x * 4)];
-            }   
-        }
-    }
+    return in * scaleMatrix;
 }
 
-void Transformation::rotateX(GLfloat* out, GLfloat* in, GLuint angle) {
-    GLfloat rotateMatrix[16];
-    Transformation::identity(rotateMatrix);
-    GLfloat radiant = angle * M_PI /180;
-    rotateMatrix[5] = cos(radiant);  
-    rotateMatrix[6] = sin(radiant);
-    rotateMatrix[9] = -sin(radiant);
-    rotateMatrix[10] = cos(radiant);
+mat4 Transformation::rotateZ(mat4& in, GLuint angle) {
+    /*
+        create rotate Z Matrix:
+        | cos -sin    0    0   |
+        | sin  cos    0    0   |
+        |   0    0    0    0   |
+        |   0    0    0    1   |
+    */
+    mat4 rotateZMatrix {1.0f};
+    float radiant = angle * M_PI /180;
+    rotateZMatrix[0][0] = cos(radiant);  
+    rotateZMatrix[0][1] = -sin(radiant);
+    rotateZMatrix[1][0] = sin(radiant);
+    rotateZMatrix[1][1] = cos(radiant);
 
-    for (size_t y = 0; y < 4; y++) {
-        for (size_t x = 0; x < 4; x++) {
-            for (size_t i = 0; i < 4; i++) {
-                out[y + (x * 4)] += rotateMatrix[y + (i * 4)] * in[i +(x * 4)];
-            }   
-        }
-    }
+    return in * rotateZMatrix;
 }
 
-void Transformation::rotateY(GLfloat* out, GLfloat* in, GLuint angle) {
-    GLfloat rotateMatrix[16];
-    Transformation::identity(rotateMatrix);
-    GLfloat radiant = angle * M_PI /180;
-    rotateMatrix[0] = cos(radiant);  
-    rotateMatrix[2] = -sin(radiant);
-    rotateMatrix[8] = sin(radiant);
-    rotateMatrix[10] = cos(radiant);
+mat4 Transformation::rotateX(mat4& in, GLuint angle) {
+    /*
+        create rotate X Matrix:
+        |   0    0    0    0   |
+        |   0  cos -sin    0   |
+        |   0  sin  cos    0   |
+        |   0    0    0    1   |
+    */
+    mat4 rotateXMatrix {1.0f};
+    float radiant = angle * M_PI /180;
+    rotateXMatrix[1][1] = cos(radiant);  
+    rotateXMatrix[1][2] = -sin(radiant);
+    rotateXMatrix[2][1] = sin(radiant);
+    rotateXMatrix[2][2] = cos(radiant);
 
-    for (size_t y = 0; y < 4; y++) {
-        for (size_t x = 0; x < 4; x++) {
-            for (size_t i = 0; i < 4; i++) {
-                out[y + (x * 4)] += rotateMatrix[y + (i * 4)] * in[i +(x * 4)];
-            }   
-        }
-    }
+    return in * rotateXMatrix;
 }
 
-void Transformation::printM4x4(GLfloat* matrix, std::string name) {
-    std::cout << "\nMatrix: " << name << "\n" << std::endl;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            std::cout << matrix[i + (j * 4)] << "\t";
-        }
-        std::cout << "\n";
-    }
-    std::cout << "\n";
-}
+mat4 Transformation::rotateY(mat4& in, GLuint angle) {
+    /*
+        create rotate Z Matrix:
+        | cos    0 -sin    0   |
+        |   0    0    0    0   |
+        |-sin    0  cos    0   |
+        |   0    0    0    1   |
+    */
+    mat4 rotateYMatrix {1.0f};
+    float radiant = angle * M_PI /180;
+    rotateYMatrix[0][0] = cos(radiant);  
+    rotateYMatrix[0][2] = sin(radiant);
+    rotateYMatrix[2][0] = -sin(radiant);
+    rotateYMatrix[2][2] = cos(radiant);
 
-void Transformation::printM(GLfloat* matrix, std::string name) {
-    std::cout << "\nMatrix straight: " << name << std::endl;
-    std::cout << matrix[0];
-    for (int i = 1; i < 16; i++) {
-        std::cout << ", " << matrix[i];
-    }
-    std::cout << "\n";
+    return in * rotateYMatrix;
 }
 
 void Transformation::lookAt() {

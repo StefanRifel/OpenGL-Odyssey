@@ -9,6 +9,10 @@ mat4::mat4() {
 }
 
 mat4::mat4(float identity) {
+    if(identity != 1.0f) {
+        identity == 1.0f;
+    }
+
     for (int x = 0; x < MAT_N; x++) {
         for (int y = 0; y < MAT_N; y++) {
             x == y ? matrix[x][y] = identity : matrix[x][y] = 0.0f;
@@ -24,11 +28,23 @@ mat4::~mat4() {
 
 }
 
+const float* mat4::valuePtr() const {
+    static float matPtr[16] = {0.0f};
+    int i = 0;
+    for (int x = 0; x < MAT_N; x++) {
+        for (int y = 0; y < MAT_N; y++) {
+            matPtr[i] = matrix[y][x];
+            i++;
+        }
+    }
+    return matPtr;
+}
+
 std::ostream& operator<< (std::ostream& out, const mat4& mat) {
     for (int x = 0; x < MAT_N; x++) {
         out << "|";
         for (int y = 0; y < MAT_N; y++) {
-            out << " " << mat.matrix[x][y]; 
+            out << std::setw(12) << std::right << mat.matrix[x][y]; 
         }
         out << " |\n";
     }
