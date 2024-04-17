@@ -65,6 +65,42 @@ void Transformation::rotateZ(GLfloat* out, GLfloat* in, GLuint angle) {
     }
 }
 
+void Transformation::rotateX(GLfloat* out, GLfloat* in, GLuint angle) {
+    GLfloat rotateMatrix[16];
+    Transformation::identity(rotateMatrix);
+    GLfloat radiant = angle * M_PI /180;
+    rotateMatrix[5] = cos(radiant);  
+    rotateMatrix[6] = sin(radiant);
+    rotateMatrix[9] = -sin(radiant);
+    rotateMatrix[10] = cos(radiant);
+
+    for (size_t y = 0; y < 4; y++) {
+        for (size_t x = 0; x < 4; x++) {
+            for (size_t i = 0; i < 4; i++) {
+                out[y + (x * 4)] += rotateMatrix[y + (i * 4)] * in[i +(x * 4)];
+            }   
+        }
+    }
+}
+
+void Transformation::rotateY(GLfloat* out, GLfloat* in, GLuint angle) {
+    GLfloat rotateMatrix[16];
+    Transformation::identity(rotateMatrix);
+    GLfloat radiant = angle * M_PI /180;
+    rotateMatrix[0] = cos(radiant);  
+    rotateMatrix[2] = -sin(radiant);
+    rotateMatrix[8] = sin(radiant);
+    rotateMatrix[10] = cos(radiant);
+
+    for (size_t y = 0; y < 4; y++) {
+        for (size_t x = 0; x < 4; x++) {
+            for (size_t i = 0; i < 4; i++) {
+                out[y + (x * 4)] += rotateMatrix[y + (i * 4)] * in[i +(x * 4)];
+            }   
+        }
+    }
+}
+
 void Transformation::printM4x4(GLfloat* matrix, std::string name) {
     std::cout << "\nMatrix: " << name << "\n" << std::endl;
     for (int i = 0; i < 4; i++) {
@@ -83,4 +119,14 @@ void Transformation::printM(GLfloat* matrix, std::string name) {
         std::cout << ", " << matrix[i];
     }
     std::cout << "\n";
+}
+
+void Transformation::lookAt() {
+GLfloat look[] = {0.0f, 0.0f, 0.0f};
+GLfloat eye[] = {0.0f, 0.0f, 0.0f};
+GLfloat up[] = {0.0f, 1.0f, 0.0f};
+
+GLfloat n[] = {eye[0] - look[0], eye[1] - look[1], eye[2] - look[2]};
+//GLfloat u[] = 
+
 }

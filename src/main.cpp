@@ -3,6 +3,7 @@
 #include "shader/Shader.hpp"
 #include "utils/ModelLoader.hpp"
 #include "utils/Transformation.hpp"
+#include "utils/vec3.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -80,9 +81,6 @@ void init(void) {
 
     std::vector<Vertex> verticesCircleHole = calcCircleHoleVertices(Vertex {glm::vec3 {-0.5f, 0.5f, 0.0f}}, 0.1f, 0.5f);
 
-    ModelLoader loader {"../assets/models/hsh_logo.txt"};
-    loader.load();
-
     Triangle* triangle = new Triangle {verticesTriangle, color};
 
     triangle->setColor(differentColor);
@@ -96,7 +94,13 @@ void init(void) {
     CircleHole* circleHole = new CircleHole{verticesCircleHole};
     circleHole->setColor(differentColor);
 
-    Mesh* hsh = new Mesh {loader.getVertices(), loader.getFaces()};
+    std::vector<Vertex> vertices; 
+    std::vector<GLuint> indices;
+    if (ModelLoader::load("../assets/models/cube.obj", vertices, indices) == false) {
+        std::cerr << "ERROR::MAIN::INIT::FAILED TO LOAD OBJ FILE" << std::endl;
+    }
+    Mesh* hsh = new Mesh {vertices, indices};
+    
     hsh->setColor(color);
 
     //renderableObjects.push_back(triangle);
@@ -104,6 +108,26 @@ void init(void) {
     //renderableObjects.push_back(circle);
     //renderableObjects.push_back(circleHole);
     renderableObjects.push_back(hsh);
+    
+    /*
+    std::cout << "index" << std::endl;
+    int r = 0;
+    for (auto &&i : hsh->getIndices())
+    {
+        if(r % 3 == 0) {
+            std::cout << "\n";
+            r = 0;
+        }
+        std::cout << i;
+        r++;
+    }
+    std::cout << "\nvertex" << std::endl;
+    for (auto &&i : hsh->getVertices())
+    {
+        std::cout << i.position.x << " " << i.position.y << " " << i.position.z << std::endl;
+    }
+*/
+
 }
 
 void draw(void) {
@@ -147,7 +171,7 @@ int main(void) {
     init();
 
     // set line or fill from graphic
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);

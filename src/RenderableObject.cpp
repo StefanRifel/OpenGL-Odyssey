@@ -74,18 +74,28 @@ void RenderableObject::draw(Shader shader) const {
 
     float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
     glUniform3f(vertexFragColor, color.r, color.g, color.b);
-
+/*
     std::cout << "--------Start--------" << std::endl;
     std::cout << "--------Scale--------" << std::endl;
-
-    GLfloat scaleResult1[16] = {0.0f};
+*/
     GLfloat in[16];
     Transformation::identity(in);
+
+    GLfloat rotateResultx[16] = {0.0f};
+    Transformation::rotateX(rotateResultx, in, 75);
+    //Transformation::printM4x4(rotateResultx, "first rotation z result");
+
+    GLfloat rotateResulty[16] = {0.0f};
+    Transformation::rotateY(rotateResulty, rotateResultx, 25);
+    //Transformation::printM4x4(rotateResult1, "first rotation z result");
+
+    GLfloat scaleResult1[16] = {0.0f};
     GLfloat scaleV1[3] = {
-        0.5f, 0.5f, 1.0f // x, y, z
+        0.5f, 0.5f, 0.5f // x, y, z
     };
 
-    Transformation::scale(scaleResult1, in, scaleV1);
+    Transformation::scale(scaleResult1, rotateResulty, scaleV1);
+    /*
     Transformation::printM4x4(scaleResult1, "first scale result");
 
     GLfloat scaleResult2[16] = {0.0f};
@@ -98,9 +108,9 @@ void RenderableObject::draw(Shader shader) const {
     std::cout << "--------RotateZ--------" << std::endl;
     
     GLfloat rotateResult1[16] = {0.0f};
-    Transformation::rotateZ(rotateResult1, scaleResult2, 45);
-    Transformation::printM4x4(rotateResult1, "first translation result");
-
+    Transformation::rotateZ(rotateResult1, scaleResult2, 30);
+    Transformation::printM4x4(rotateResult1, "first rotation z result");
+    
     std::cout << "--------Translate--------" << std::endl;
     
     GLfloat translateResult1[16] = {0.0f};
@@ -120,9 +130,9 @@ void RenderableObject::draw(Shader shader) const {
     std::cout << "--------End--------" << std::endl;
 
     //Transformation::rotateZ(out, in, 60);
-
+    */
     float vertexTransform = glGetUniformLocation(shader.ID, "transform");
-    glUniformMatrix4fv(vertexTransform, 1, GL_FALSE, translateResult2);
+    glUniformMatrix4fv(vertexTransform, 1, GL_FALSE, scaleResult1);
     
     glEnable(GL_CULL_FACE);
 }
@@ -152,4 +162,12 @@ void RenderableObject::setVertex(Vertex vertex) {
 void RenderableObject::setPosition(GLfloat* transformMatrix, GLuint shaderID) const {
     float vertexTransform = glGetUniformLocation(shaderID, "transform");
     glUniformMatrix4fv(vertexTransform, 1, GL_FALSE, transformMatrix);
+}
+
+const std::vector<Vertex>& RenderableObject::getVertices() const {
+    return vertices;
+}
+
+const std::vector<GLuint>& RenderableObject::getIndices() const {
+    return indices;
 }

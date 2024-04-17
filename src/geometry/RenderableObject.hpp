@@ -28,6 +28,9 @@ public:
     void setColor(glm::ivec3 color);
     void setPosition(GLfloat* transformMatrix, GLuint shaderID) const;
 
+    const std::vector<Vertex>& getVertices() const;
+    const std::vector<GLuint>& getIndices() const;
+
     const std::size_t getIndicesSize() const;
     const std::size_t getVerticiesSize() const;
 

@@ -20,7 +20,7 @@ Mesh::~Mesh() {
 void Mesh::draw(Shader shader) const {
     RenderableObject::draw(shader);
 
-    glEnable(GL_PRIMITIVE_RESTART);
-    glPrimitiveRestartIndex(0xFFFF);
-    glDrawElements(GL_TRIANGLE_STRIP, getIndicesSize(), GL_UNSIGNED_INT, 0);
+    //glEnable(GL_PRIMITIVE_RESTART);
+    //glPrimitiveRestartIndex(0xFFFF);
+    glDrawElements(GL_TRIANGLES, getIndicesSize(), GL_UNSIGNED_INT, 0);
 }

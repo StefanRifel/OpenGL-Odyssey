@@ -14,8 +14,11 @@ public:
     static void translate(GLfloat* out, GLfloat* in, GLfloat* v);
     static void scale(GLfloat* out, GLfloat* in, GLfloat* v);
     static void rotateZ(GLfloat* out, GLfloat* in, GLuint angle);
+    static void rotateX(GLfloat* out, GLfloat* in, GLuint angle);
+    static void rotateY(GLfloat* out, GLfloat* in, GLuint angle);
     static void printM4x4(GLfloat* matrix, std::string name);
     static void printM(GLfloat* matrix, std::string name);
+    static void lookAt();
 };
 
 #endif
