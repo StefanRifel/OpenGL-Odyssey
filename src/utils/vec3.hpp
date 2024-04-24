@@ -5,6 +5,7 @@ const int VEC_N = 3;
 
 #include <iostream>
 #include <array>
+#include <cmath>
 
 class vec3
 {
@@ -22,6 +23,8 @@ public:
     const float r() const;
     const float g() const;
     const float b() const;
+
+    float length() const;
 
     friend std::ostream& operator<< (std::ostream& out, const vec3& v);
 

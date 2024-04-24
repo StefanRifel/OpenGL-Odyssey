@@ -4,7 +4,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../utils/Logger.hpp"
+#include "../include/glm/mat4x4.hpp"
+#include "../include/glm/gtc/type_ptr.hpp"
+#include "../utils/mat4.hpp"
 
 #include <string>
 #include <fstream>
@@ -15,6 +17,9 @@ class Shader {
 public:
     // the program ID
     GLuint ID;
+    mat4 model;
+    mat4 view;
+    mat4 projection;
     
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
@@ -27,6 +32,10 @@ public:
     void setBool(const std::string &name, bool value) const;
     void setInt(const std::string &name, int value) const;
     void setFloat(const std::string &name, float value) const;
+
+    void setModel(mat4 model);
+    void setView(mat4 view);
+    void setProjection(mat4 projection);
 };
 
 #endif

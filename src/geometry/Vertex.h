@@ -5,6 +5,7 @@
 
 typedef struct {
     vec3 position;
+    vec3 color;
 } Vertex;
 
 #endif

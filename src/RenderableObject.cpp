@@ -31,8 +31,8 @@ void RenderableObject::init() {
     glBindVertexArray(VAO);
 
     // VBO for Position
-    glGenBuffers(1, &PVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, PVBO);
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &(vertices[0]), GL_STATIC_DRAW);
 
     glVertexAttribPointer(
@@ -45,18 +45,13 @@ void RenderableObject::init() {
     );
     glEnableVertexAttribArray(0);
 
-    // VBO for Color
-    glGenBuffers(1, &CVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, CVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(color), &color, GL_STATIC_DRAW);
-
     glVertexAttribPointer(
         1,                      
         3,                    
         GL_FLOAT,              
         GL_FALSE,            
-        sizeof(color),        
-        (void*)0  
+        sizeof(Vertex),        
+        (void*)(sizeof(vec3))  
     );
     glEnableVertexAttribArray(1);
 
@@ -72,23 +67,8 @@ void RenderableObject::init() {
     shader.use();
     glBindVertexArray(VAO);
 
-    float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
-    glUniform3f(vertexFragColor, color.r(), color.g(), color.b());
-
-    mat4 transform;
-    Transformation::identity(transform);
-
-    vec3 scale {0.5f, 0.5f, 1.0f};
-    vec3 translate { 0.3f, 0.2f, 0.0f};
-    
-    transform = Transformation::scale(transform, scale);
-    transform = Transformation::rotateY(transform, 70);
-    transform = Transformation::rotateZ(transform, 30);
-    transform = Transformation::translate(transform, translate);
-
-    float vertexTransform = glGetUniformLocation(shader.ID, "transform");
-    glUniformMatrix4fv(vertexTransform, 1, GL_FALSE, transform.valuePtr());
-
+    //float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
+    //glUniform3f(vertexFragColor, color.r(), color.g(), color.b());
     //glEnable(GL_CULL_FACE);
 }
 
@@ -112,11 +92,6 @@ const std::size_t RenderableObject::getVerticiesSize() const {
 
 void RenderableObject::setVertex(Vertex vertex) {
     this->vertices.push_back(vertex);
-}
-
-void RenderableObject::setPosition(GLfloat* transformMatrix, GLuint shaderID) const {
-    float vertexTransform = glGetUniformLocation(shaderID, "transform");
-    glUniformMatrix4fv(vertexTransform, 1, GL_FALSE, transformMatrix);
 }
 
 const std::vector<Vertex>& RenderableObject::getVertices() const {

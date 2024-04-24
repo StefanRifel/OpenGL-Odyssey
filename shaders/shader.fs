@@ -7,7 +7,7 @@ out vec4 FragColor;
 uniform vec3 fragColor;
 
 void main() {
-    FragColor = vec4(fragColor, 1.0);
+    FragColor = vec4(vertexColor, 1.0);
 
     //first
     //FragColor = vec4(mix(fragColor1, fragColor2, fragValue), 1.0);

@@ -40,6 +40,10 @@ const float vec3::b() const {
     return vector[2];
 }
 
+float vec3::length() const {
+    return sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2]);
+}
+
 std::ostream& operator << (std::ostream& out, const vec3& v) {
     out << "(" << v.vector[0]; 
     for (int i = 1; i < VEC_N; i++) {

@@ -1,147 +1,101 @@
-#include <iostream>
-
-#include "shader/Shader.hpp"
-#include "utils/ModelLoader.hpp"
-#include "utils/Transformation.hpp"
-#include "utils/vec3.hpp"
-#include "utils/mat4.hpp"
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+#include <cmath>
+
+#include "shader/Shader.hpp"
+#include "utils/Camera.hpp"
+#include "utils/vec3.hpp"
+
 #include "geometry/Triangle.hpp"
-#include "geometry/Rectangle.hpp"
-#include "geometry/Circle.hpp"
-#include "geometry/CircleHole.hpp"
 #include "geometry/Mesh.hpp"
 
-#include <cmath>
+#define GLM_ENABLE_EXPERIMENTAL
+#include "include/glm/gtx/string_cast.hpp"
 
 Shader shader;
 
+Camera* camera = new Camera {};
+
 std::vector<RenderableObject*> renderableObjects;
 
-std::vector<Vertex> calcCircleVertices(Vertex origin, GLfloat radius) {
-    std::vector<Vertex> circleVertices;
-    circleVertices.push_back(origin);
-    for(float angle = 360; angle >= 0; angle--) {
-        float x = (float)(radius * cos(angle * M_PI /180));
-        x += origin.position.x();
-        float y = (float)(radius * sin(angle * M_PI /180));
-        y += origin.position.y();
-        circleVertices.push_back(Vertex {vec3 {x, y, 0.0f}});
-    }
-    return circleVertices;
-}
-
-std::vector<Vertex> calcCircleHoleVertices(Vertex origin, GLfloat innerRadius, GLfloat outerRadius) {
-    std::vector<Vertex> circleVertices;
-    for(float angle = 360; angle >= 0; angle --) {
-        float x = (float)(outerRadius * cos(angle * M_PI /180));
-        x += origin.position.x();
-        float y = (float)(outerRadius * sin(angle * M_PI /180));
-        y += origin.position.y();
-        circleVertices.push_back(Vertex {vec3 {x, y, 0.0f}});
-
-        x = (float)(innerRadius * cos(angle * M_PI /180));
-        x += origin.position.x();
-        y = (float)(innerRadius * sin(angle * M_PI /180));
-        y += origin.position.y();
-        circleVertices.push_back(Vertex {vec3 {x, y, 0.0f}});
-    }
-    return circleVertices;
+vec3 calcCircleVertices(GLfloat angle) {
+    vec3 cameraPos {};
+    
+    float x = (float)(10.0f * cos(angle * M_PI /180));
+    cameraPos.x() = x;
+    float y = (float)(10.0f * sin(angle * M_PI /180));
+    cameraPos.y() = y;
+    
+    return cameraPos;
 }
 
 void init(void) {
     shader.createShader("../shaders/shader.vs", "../shaders/shader.fs");
 
-
     vec3 color {255, 112, 112};
-    vec3 differentColor {57, 36, 103};
 
-    std::vector<Vertex> verticesTriangle = {
-        Vertex {vec3 {0.0f, 0.5f, 0.0f}},
-        Vertex {vec3 {-0.5f, -0.5f, 0.0f}},
-        Vertex {vec3 {0.5f, -0.5f, 0.0f}}
+    std::vector<Vertex> vertices = {
+        Vertex {vec3 {-1.0f, -1.0f, -1.0f}, vec3 {0.1f, 0.1, 0.1f}},
+        Vertex {vec3(1, -1, -1) , vec3 {0.2f, 0.2, 0.2f}},
+        Vertex {vec3(1, 1, -1), vec3 {0.3f, 0.3, 0.3f}},
+        Vertex {vec3(-1, 1, -1), vec3 {0.4f, 0.4, 0.4f}},
+        Vertex {vec3(-1, -1, 1), vec3 {0.5f, 0.5, 0.5f}},
+        Vertex {vec3(1, -1, 1), vec3 {0.6f, 0.6, 0.6f}},
+        Vertex {vec3(1, 1, 1), vec3 {0.7f, 0.7, 0.7f}},
+        Vertex {vec3(-1, 1, 1), vec3 {0.8f, 0.8, 0.8f}}
     };
 
-    std::vector<Vertex> verticesRectangle = {
-        Vertex {vec3 {-1.0f, 1.0f, 0.0f}},
-        Vertex {vec3 {-1.0f, 0.8f, 0.0f}},
-        Vertex {vec3 {-0.5f, 1.0f, 0.0f}},
-        Vertex {vec3 {-0.5f, 0.8f, 0.0f}},
-        
+    std::vector<GLuint> indices = {
+        0, 1, 3, 3, 1, 2,
+        1, 5, 2, 2, 5, 6,
+        5, 4, 6, 6, 4, 7,
+        4, 0, 7, 7, 0, 3,
+        3, 2, 7, 7, 2, 6,
+        4, 5, 0, 0, 5, 1
     };
 
-    std::vector<GLuint> indicesRectangle = {
-        0, 1, 2,
-        3, 2, 1
-    };
-
-    std::vector<Vertex> verticesCircle {calcCircleVertices(Vertex {vec3 {0.5f, 0.5f, 0.0f}}, 0.8f)};
-
-    std::vector<Vertex> verticesCircleHole = calcCircleHoleVertices(Vertex {vec3 {-0.5f, 0.5f, 0.0f}}, 0.1f, 0.5f);
-
-    Triangle* triangle = new Triangle {verticesTriangle, color};
-
-    triangle->setColor(differentColor);
-
-    Rectangle* rectangle = new Rectangle {verticesRectangle, indicesRectangle};
-
-    rectangle->setColor(color);
-
-    Circle* circle = new Circle {verticesCircle};
-
-    CircleHole* circleHole = new CircleHole{verticesCircleHole};
-    circleHole->setColor(differentColor);
-
-    std::vector<Vertex> vertices; 
-    std::vector<GLuint> indices;
-    if (ModelLoader::load("../assets/models/cube.obj", vertices, indices) == false) {
-        std::cerr << "ERROR::MAIN::INIT::FAILED TO LOAD OBJ FILE" << std::endl;
+    for (size_t i = 0; i < 3; i++) {
+        Mesh* cube = new Mesh {vertices, indices};
+        renderableObjects.push_back(cube);
     }
-    Mesh* hsh = new Mesh {vertices, indices};
-    
-    hsh->setColor(color);
-
-    //renderableObjects.push_back(triangle);
-    //renderableObjects.push_back(rectangle);
-    //renderableObjects.push_back(circle);
-    //renderableObjects.push_back(circleHole);
-    renderableObjects.push_back(hsh);
-    
-    /*
-    std::cout << "index" << std::endl;
-    int r = 0;
-    for (auto &&i : hsh->getIndices())
-    {
-        if(r % 3 == 0) {
-            std::cout << "\n";
-            r = 0;
-        }
-        std::cout << i;
-        r++;
-    }
-    std::cout << "\nvertex" << std::endl;
-    for (auto &&i : hsh->getVertices())
-    {
-        std::cout << i.position.x << " " << i.position.y << " " << i.position.z << std::endl;
-    }
-*/
 }
 
 void draw(void) {
     glClearColor(0.94f, 0.93f, 0.81f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
+    vec3 eye {0.0,0.0,3.0};
+    vec3 lool {0.0,0.0,0.0};
+    vec3 up {0.0,1.0,0.0};
+    
+    camera->look(shader);
     for (RenderableObject* obj : renderableObjects) {
+        Transformation::lookAt(eye, lool, up);
         obj->draw(shader);
     }
 }
 
 void processInput(GLFWwindow *window) {
+
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
+
+    const float cameraSpeed = 0.05f; // adjust accordingly
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    camera->cameraPos += cameraSpeed * camera->cameraFront;
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    camera->cameraPos -= cameraSpeed * camera->cameraFront;
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    camera->cameraPos -= glm::normalize(glm::cross(camera->cameraFront, camera->cameraUp)) * cameraSpeed;
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    camera->cameraPos += glm::normalize(glm::cross(camera->cameraFront, camera->cameraUp)) * cameraSpeed;
+
+
+    //std::cout << "(" << camera->cameraPos.x << ", " << camera->cameraPos.y << ", " << camera->cameraPos.z << ")" << std::endl;
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
@@ -149,7 +103,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 }
 
 int main(void) {
-    Logger::log("Welcome to OpenGL Odyssey!");
+    std::cout << "Welcome to OpenGL Odyssey!" << std::endl;
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -157,9 +111,8 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
     GLFWwindow *window = glfwCreateWindow(1024, 768, "OpenGL Odyssey", NULL, NULL);
-    if (!window)
-    {
-        Logger::logerr("Failed to create Window");
+    if (!window) {
+        std::cerr << "Failed to create Window" << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -171,7 +124,9 @@ int main(void) {
     init();
 
     // set line or fill from graphic
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // enable depth test
+    glEnable(GL_DEPTH_TEST);  
 
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
@@ -182,6 +137,7 @@ int main(void) {
     {
         // input
         processInput(window);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // rendering commands here
         draw();

@@ -10,10 +10,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "../include/glm/glm.hpp"
+#include "../include/glm/gtc/matrix_transform.hpp"
+#include "../include/glm/gtc/type_ptr.hpp"
+
 class RenderableObject {
 
 private:
-    GLuint VAO, PVBO, CVBO, EBO;
+    GLuint VAO, VBO, EBO;
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
     vec3 color;
@@ -25,9 +29,9 @@ public:
     RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices);
     RenderableObject(std::vector<Vertex> vertices, std::vector<GLuint> indices, vec3 color);
     virtual ~RenderableObject();
+
     virtual void draw(Shader shader) const;
     void setColor(vec3 color);
-    void setPosition(GLfloat* transformMatrix, GLuint shaderID) const;
 
     const std::vector<Vertex>& getVertices() const;
     const std::vector<GLuint>& getIndices() const;
