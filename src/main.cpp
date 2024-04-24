@@ -8,11 +8,7 @@
 #include "utils/Camera.hpp"
 #include "utils/vec3.hpp"
 
-#include "geometry/Triangle.hpp"
 #include "geometry/Mesh.hpp"
-
-#define GLM_ENABLE_EXPERIMENTAL
-#include "include/glm/gtx/string_cast.hpp"
 
 Shader shader;
 
@@ -82,20 +78,24 @@ void processInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, true);
 
     const float cameraSpeed = 0.05f; // adjust accordingly
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    camera->cameraPos += cameraSpeed * camera->cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        std::cout << "W: " << camera->cameraPos << std::endl;
+    }
+    
 
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    camera->cameraPos -= cameraSpeed * camera->cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        std::cout << "S: " << camera->cameraPos << std::endl;
+    }
+    
 
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    camera->cameraPos -= glm::normalize(glm::cross(camera->cameraFront, camera->cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        std::cout << "A: " << camera->cameraPos << std::endl;
+    }
+    
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    camera->cameraPos += glm::normalize(glm::cross(camera->cameraFront, camera->cameraUp)) * cameraSpeed;
-
-
-    //std::cout << "(" << camera->cameraPos.x << ", " << camera->cameraPos.y << ", " << camera->cameraPos.z << ")" << std::endl;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        std::cout << "D: " << camera->cameraPos << std::endl;
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {

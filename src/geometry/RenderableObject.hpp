@@ -10,10 +10,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../include/glm/glm.hpp"
-#include "../include/glm/gtc/matrix_transform.hpp"
-#include "../include/glm/gtc/type_ptr.hpp"
-
 class RenderableObject {
 
 private:

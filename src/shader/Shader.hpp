@@ -4,8 +4,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../include/glm/mat4x4.hpp"
-#include "../include/glm/gtc/type_ptr.hpp"
 #include "../utils/mat4.hpp"
 
 #include <string>
