@@ -67,9 +67,8 @@ void RenderableObject::init() {
     shader.use();
     glBindVertexArray(VAO);
 
-    //float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
-    //glUniform3f(vertexFragColor, color.r(), color.g(), color.b());
-    //glEnable(GL_CULL_FACE);
+    float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
+    glUniform3f(vertexFragColor, color.r(), color.g(), color.b());
 }
 
 void RenderableObject::setColor(vec3 color) {

@@ -168,3 +168,10 @@ mat4 Transformation::perspective(float fov, float aspect, float near, float far)
 float Transformation::radiant(float angle) {
     return angle * M_PI /180;
 }
+
+vec3 Transformation::calcPointOnCircle(int angle, float radius) {
+    vec3 point {};
+    point.x() = (float)(radius * cos(angle * M_PI /180));
+    point.y() = (float)(radius * sin(angle * M_PI /180));
+    return point;
+}

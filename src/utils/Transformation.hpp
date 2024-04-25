@@ -27,7 +27,9 @@ public:
     static vec3 cross(vec3& a, vec3& b);
     static float dot(vec3& a, vec3& b);
 
+    static vec3 calcPointOnCircle(int angle, float radius);
     static float radiant(float angle);
+    
 };
 
 #endif

@@ -7,6 +7,8 @@
 #include "shader/Shader.hpp"
 #include "utils/Camera.hpp"
 #include "utils/vec3.hpp"
+#include "utils/Transformation.hpp"
+#include "utils/ModelLoader.hpp"
 
 #include "geometry/Mesh.hpp"
 
@@ -16,58 +18,42 @@ Camera* camera = new Camera {};
 
 std::vector<RenderableObject*> renderableObjects;
 
-vec3 calcCircleVertices(GLfloat angle) {
-    vec3 cameraPos {};
-    
-    float x = (float)(10.0f * cos(angle * M_PI /180));
-    cameraPos.x() = x;
-    float y = (float)(10.0f * sin(angle * M_PI /180));
-    cameraPos.y() = y;
-    
-    return cameraPos;
-}
-
 void init(void) {
     shader.createShader("../shaders/shader.vs", "../shaders/shader.fs");
 
     vec3 color {255, 112, 112};
 
-    std::vector<Vertex> vertices = {
-        Vertex {vec3 {-1.0f, -1.0f, -1.0f}, vec3 {0.1f, 0.1, 0.1f}},
-        Vertex {vec3(1, -1, -1) , vec3 {0.2f, 0.2, 0.2f}},
-        Vertex {vec3(1, 1, -1), vec3 {0.3f, 0.3, 0.3f}},
-        Vertex {vec3(-1, 1, -1), vec3 {0.4f, 0.4, 0.4f}},
-        Vertex {vec3(-1, -1, 1), vec3 {0.5f, 0.5, 0.5f}},
-        Vertex {vec3(1, -1, 1), vec3 {0.6f, 0.6, 0.6f}},
-        Vertex {vec3(1, 1, 1), vec3 {0.7f, 0.7, 0.7f}},
-        Vertex {vec3(-1, 1, 1), vec3 {0.8f, 0.8, 0.8f}}
-    };
+    
+    
 
-    std::vector<GLuint> indices = {
-        0, 1, 3, 3, 1, 2,
-        1, 5, 2, 2, 5, 6,
-        5, 4, 6, 6, 4, 7,
-        4, 0, 7, 7, 0, 3,
-        3, 2, 7, 7, 2, 6,
-        4, 5, 0, 0, 5, 1
-    };
+    ModelLoader loader {};
+    const char* path = "../assets/models/human.obj";
+    std::vector<Vertex> inVertices;
+    std::vector<GLuint> inFaces;
+    loader.load(path, inVertices, inFaces);
+
+    Mesh* teapot  = new Mesh {inVertices, inFaces};
+    renderableObjects.push_back(teapot);
+
+
+    path = "../assets/models/cube.obj";
+    inVertices.clear();
+    inFaces.clear();
+    loader.load(path, inVertices, inFaces);
 
     for (size_t i = 0; i < 3; i++) {
-        Mesh* cube = new Mesh {vertices, indices};
+        Mesh* cube = new Mesh {inVertices, inFaces};
         renderableObjects.push_back(cube);
     }
 }
 
 void draw(void) {
     glClearColor(0.94f, 0.93f, 0.81f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    vec3 eye {0.0,0.0,3.0};
-    vec3 lool {0.0,0.0,0.0};
-    vec3 up {0.0,1.0,0.0};
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     camera->look(shader);
     for (RenderableObject* obj : renderableObjects) {
-        Transformation::lookAt(eye, lool, up);
+        Transformation::lookAt(camera->cameraPos, camera->cameraFront, camera->cameraUp);
         obj->draw(shader);
     }
 }
@@ -77,24 +63,55 @@ void processInput(GLFWwindow *window) {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
+
     const float cameraSpeed = 0.05f; // adjust accordingly
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        std::cout << "W: " << camera->cameraPos << std::endl;
-    }
-    
 
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        std::cout << "S: " << camera->cameraPos << std::endl;
+    // Zoom camera out = "." and in = ","
+    if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
+        camera->cameraPos.z() -= cameraSpeed;
+        camera->radiusXZ = camera->cameraPos.z();
+        std::cout << "zoom in: " << camera->cameraPos << std::endl;
+    } else if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
+        camera->cameraPos.z() += cameraSpeed;
+        camera->radiusXZ = camera->cameraPos.z();
+        std::cout << "zoom out: " << camera->cameraPos << std::endl;
     }
-    
 
+    // change position and point of view of the camera
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        camera->cameraPos.y() += cameraSpeed;
+        camera->cameraFront.y() += cameraSpeed;
+        std::cout << "move camera up: " << camera->cameraPos << std::endl;
+    } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        camera->cameraPos.y() -= cameraSpeed;
+        camera->cameraFront.y() -= cameraSpeed;
+        std::cout << "move camera down: " << camera->cameraPos << std::endl;
+    } else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        camera->cameraPos.x() -= cameraSpeed;
+        camera->cameraFront.x() -= cameraSpeed;
+        std::cout << "move camera left: " << camera->cameraPos << std::endl;
+    } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        camera->cameraPos.x() += cameraSpeed;
+        camera->cameraFront.x() += cameraSpeed;
+        std::cout << "move camera right: " << camera->cameraPos << std::endl;
+    }
+
+    // rotate model around in x and y axis
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        std::cout << "A: " << camera->cameraPos << std::endl;
+        camera->anlgeXZ--;
+        vec3 newPos = Transformation::calcPointOnCircle(camera->anlgeXZ, camera->radiusXZ);
+        camera->cameraPos.x() = newPos.x();
+        camera->cameraPos.z() = newPos.y();
+        std::cout << "turn camera around left: " << camera->cameraPos << std::endl;
     }
     
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        std::cout << "D: " << camera->cameraPos << std::endl;
+        camera->anlgeXZ++;
+        vec3 newPos = Transformation::calcPointOnCircle(camera->anlgeXZ, camera->radiusXZ);
+        camera->cameraPos.x() = newPos.x();
+        camera->cameraPos.z() = newPos.y();
+        std::cout << "turn camera around right: " << camera->cameraPos << std::endl;
     }
 }
 
@@ -124,9 +141,10 @@ int main(void) {
     init();
 
     // set line or fill from graphic
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    // enable depth test
-    glEnable(GL_DEPTH_TEST);  
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);

@@ -21,6 +21,7 @@ void Mesh::draw(Shader shader) const {
     RenderableObject::draw(shader);
 
     mat4 model {1.0f};
+    
     vec3 s {0.3f, 0.3f, 0.3f};
     model = Transformation::scale(model, s);
     static int count = 0;
@@ -32,6 +33,7 @@ void Mesh::draw(Shader shader) const {
         model = Transformation::translate(model, t);
     }
     count++;
+    
     shader.setModel(model);
 
     //glEnable(GL_PRIMITIVE_RESTART);

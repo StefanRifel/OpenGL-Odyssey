@@ -17,6 +17,9 @@ public:
     vec3 cameraFront;
     vec3 cameraUp;
 
+    float radiusXZ;
+    int anlgeXZ;
+
     Camera();
     ~Camera();
     void look(Shader& shader);
