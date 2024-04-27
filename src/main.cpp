@@ -22,6 +22,7 @@ void init(void) {
     shader.createShader("../shaders/shader.vs", "../shaders/shader.fs");
 
     vec3 color {255, 112, 112};
+    vec3 otherColor {77, 53, 147};
 
     
     
@@ -31,8 +32,9 @@ void init(void) {
     std::vector<Vertex> inVertices;
     std::vector<GLuint> inFaces;
     loader.load(path, inVertices, inFaces);
-
+    
     Mesh* teapot  = new Mesh {inVertices, inFaces};
+    teapot->setColor(otherColor);
     renderableObjects.push_back(teapot);
 
 
@@ -54,6 +56,8 @@ void draw(void) {
     camera->look(shader);
     for (RenderableObject* obj : renderableObjects) {
         Transformation::lookAt(camera->cameraPos, camera->cameraFront, camera->cameraUp);
+        mat4 model {1.0f};
+        shader.setModel(model);
         obj->draw(shader);
     }
 }
@@ -141,7 +145,7 @@ int main(void) {
     init();
 
     // set line or fill from graphic
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

@@ -25,14 +25,12 @@ bool ModelLoader::load(const char* path, std::vector<Vertex>& outVertices, std::
                 std::stringstream ss {line.substr(2, line.length())};
                 while (getline(ss, token, ' ')) {
                     // calculate -1 because indices in obj files starts at 1 and we need to start at 0
-                    //outFaces.push_back(token.at(0) - '0' - 1);
                     std::stringstream sss {token};
                     std::string token2;
                     int count = 0;
                     while (getline(sss, token2, '/')) {
                         if(count == 0) {
                             outFaces.push_back(stoi(token2) - 1);
-                            std::cout << stoi(token2) - 1 << std::endl;
                         }
                         count++;
                     }
