@@ -2,122 +2,10 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <cmath>
-
-#include "../include/Shader.hpp"
-#include "../include/Camera.hpp"
-#include "../libs/SMath/include/vec3.hpp"
-#include "../include/Transformation.hpp"
-#include "../include/ModelLoader.hpp"
 
 #include "../include/Mesh.hpp"
 
-Shader shader;
-
-Camera* camera = new Camera {};
-
-std::vector<RenderableObject*> renderableObjects;
-
-void init(void) {
-    shader.createShader("../shaders/shader.vs", "../shaders/shader.fs");
-
-    vec3 color {255, 112, 112};
-    vec3 otherColor {77, 53, 147};
-
-    
-    
-
-    ModelLoader loader {};
-    const char* path = "../assets/models/human.obj";
-    std::vector<Vertex> inVertices;
-    std::vector<GLuint> inFaces;
-    loader.load(path, inVertices, inFaces);
-    
-    Mesh* teapot  = new Mesh {inVertices, inFaces};
-    teapot->setColor(otherColor);
-    renderableObjects.push_back(teapot);
-
-
-    path = "../assets/models/cube.obj";
-    inVertices.clear();
-    inFaces.clear();
-    loader.load(path, inVertices, inFaces);
-
-    for (size_t i = 0; i < 3; i++) {
-        Mesh* cube = new Mesh {inVertices, inFaces};
-        renderableObjects.push_back(cube);
-    }
-}
-
-void draw(void) {
-    glClearColor(0.94f, 0.93f, 0.81f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    camera->look(shader);
-    for (RenderableObject* obj : renderableObjects) {
-        Transformation::lookAt(camera->cameraPos, camera->cameraFront, camera->cameraUp);
-        mat4 model {1.0f};
-        shader.setModel(model);
-        obj->draw(shader);
-    }
-}
-
-void processInput(GLFWwindow *window) {
-
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-
-
-    const float cameraSpeed = 0.05f; // adjust accordingly
-
-    // Zoom camera out = "." and in = ","
-    if (glfwGetKey(window, GLFW_KEY_COMMA) == GLFW_PRESS) {
-        camera->cameraPos.z() -= cameraSpeed;
-        camera->radiusXZ = camera->cameraPos.z();
-        std::cout << "zoom in: " << camera->cameraPos << std::endl;
-    } else if (glfwGetKey(window, GLFW_KEY_PERIOD) == GLFW_PRESS) {
-        camera->cameraPos.z() += cameraSpeed;
-        camera->radiusXZ = camera->cameraPos.z();
-        std::cout << "zoom out: " << camera->cameraPos << std::endl;
-    }
-
-    // change position and point of view of the camera
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        camera->cameraPos.y() += cameraSpeed;
-        camera->cameraFront.y() += cameraSpeed;
-        std::cout << "move camera up: " << camera->cameraPos << std::endl;
-    } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        camera->cameraPos.y() -= cameraSpeed;
-        camera->cameraFront.y() -= cameraSpeed;
-        std::cout << "move camera down: " << camera->cameraPos << std::endl;
-    } else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        camera->cameraPos.x() -= cameraSpeed;
-        camera->cameraFront.x() -= cameraSpeed;
-        std::cout << "move camera left: " << camera->cameraPos << std::endl;
-    } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        camera->cameraPos.x() += cameraSpeed;
-        camera->cameraFront.x() += cameraSpeed;
-        std::cout << "move camera right: " << camera->cameraPos << std::endl;
-    }
-
-    // rotate model around in x and y axis
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera->anlgeXZ--;
-        vec3 newPos = Transformation::calcPointOnCircle(camera->anlgeXZ, camera->radiusXZ);
-        camera->cameraPos.x() = newPos.x();
-        camera->cameraPos.z() = newPos.y();
-        std::cout << "turn camera around left: " << camera->cameraPos << std::endl;
-    }
-    
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera->anlgeXZ++;
-        vec3 newPos = Transformation::calcPointOnCircle(camera->anlgeXZ, camera->radiusXZ);
-        camera->cameraPos.x() = newPos.x();
-        camera->cameraPos.z() = newPos.y();
-        std::cout << "turn camera around right: " << camera->cameraPos << std::endl;
-    }
-}
+#include "../include/Scene.hpp"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0,0, width, height);
@@ -126,50 +14,31 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 int main(void) {
     std::cout << "Welcome to OpenGL Odyssey!" << std::endl;
 
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    GLFWwindow *window = glfwCreateWindow(1024, 768, "OpenGL Odyssey", NULL, NULL);
-    if (!window) {
-        std::cerr << "Failed to create Window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwMakeContextCurrent(window);
+    Scene scene {1024, 768, "OpenGL-Odyssey"};
+    // setup scene
+    glfwSetFramebufferSizeCallback(scene.getWindow(), framebuffer_size_callback);
+    glfwMakeContextCurrent(scene.getWindow());
     glewInit();
+    scene.setShader();
 
-    init();
+    // create different objects
+    ModelLoader loader {};
+    const char* path = "../assets/models/sphere.obj";
+    std::vector<Vertex> inVertices;
+    std::vector<GLuint> inFaces;
+    loader.load(path, inVertices, inFaces);
 
-    // set line or fill from graphic
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
+    Mesh* teapot  = new Mesh {inVertices, inFaces};
+    vec3 color {255, 112, 112};
+    teapot->setColor(color);
+    scene.addRenderableObject(teapot);
 
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
+    // scene settings
+    scene.cullFace(true);
+    scene.polygonModeRasterized(true);
+    scene.depthTest(true);
 
-    int nrAttributes;
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
-
-    // render loop
-    while (!glfwWindowShouldClose(window))
-    {
-        // input
-        processInput(window);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // rendering commands here
-        draw();
-
-        // check and call events and swap the buffers
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-    
-    glfwTerminate();
+    scene.render();
 
     return 0;
 }
