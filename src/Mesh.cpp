@@ -1,5 +1,4 @@
 #include "../include/Mesh.hpp"
-#include <iostream>
 
 Mesh::Mesh() {
 

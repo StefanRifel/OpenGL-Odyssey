@@ -1,10 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-
 #include "../include/Mesh.hpp"
-
 #include "../include/Scene.hpp"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
