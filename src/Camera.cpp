@@ -1,4 +1,4 @@
-#include "utils/Camera.hpp"
+#include "../include/Camera.hpp"
 
 Camera::Camera() {
     this->cameraPos = {0.0f, 0.0f, 3.0f};

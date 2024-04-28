@@ -1,4 +1,4 @@
-#include "geometry/RenderableObject.hpp"
+#include "../include/RenderableObject.hpp"
 
 RenderableObject::RenderableObject() : color {0.04f, 0.38f, 0.69f} {
     init();

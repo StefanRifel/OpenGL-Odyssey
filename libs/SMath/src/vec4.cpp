@@ -1,4 +1,4 @@
-#include "utils/vec4.hpp"
+#include "../include/vec4.hpp"
 
 vec4::vec4() : vector {0, 0, 0} {
 

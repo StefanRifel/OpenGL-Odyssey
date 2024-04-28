@@ -2,7 +2,7 @@
 #define MESH_HH
 
 #include "RenderableObject.hpp"
-#include "../utils/vec3.hpp"
+#include "../libs/SMath/include/vec3.hpp"
 
 class Mesh : public RenderableObject {
 private:

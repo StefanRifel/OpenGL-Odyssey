@@ -1,4 +1,4 @@
-#include "utils/ModelLoader.hpp"
+#include "../include/ModelLoader.hpp"
 
 ModelLoader::ModelLoader() {
 }

@@ -1,4 +1,4 @@
-#include "shader/Shader.hpp"
+#include "../include/Shader.hpp"
 
 Shader::Shader() {
     

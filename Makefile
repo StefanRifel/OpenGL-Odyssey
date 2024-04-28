@@ -2,6 +2,7 @@ PROGRAMM_NAME = OpenGL_Odyssey
 
 GLEW_LIBS = -lGLEW -lEGL -lGL -lGLU -lOpenGL 
 GLFW_LIBS = -lglfw
+SMATH = -lsmath -L./libs/SMath/bin/
 
 CC = g++
 SRC = src
@@ -10,15 +11,15 @@ OBJ = obj
 
 TARGET = $(BIN)/$(PROGRAMM_NAME)
 SRCS = $(wildcard $(SRC)/*.cpp)
-OBJS = $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SRCS))
+OBJS = $(patsubst $(SRC)/%.cpp, $(BIN)/$(OBJ)/%.o, $(SRCS))
 
 all:$(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) -o $@ $(OBJS) $(GLEW_LIBS) $(GLFW_LIBS)
+	$(CC) -o $@ $(OBJS) $(GLEW_LIBS) $(GLFW_LIBS) $(SMATH)
 
-obj/%.o: $(SRC)/%.cpp
+bin/obj/%.o: $(SRC)/%.cpp
 	g++ -c $< -o $@
 
 clean:
-	rm $(BIN)/* $(OBJ)/*
+	rm $(BIN)/* $(BIN)/$(OBJ)/*

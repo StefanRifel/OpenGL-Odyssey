@@ -3,8 +3,8 @@
 
 #include <GL/glew.h>
 #include <string>
-#include "mat4.hpp"
-#include "vec3.hpp"
+#include "../libs/SMath/include/mat4.hpp"
+#include "../libs/SMath/include/vec3.hpp"
 
 class Transformation {
 private:

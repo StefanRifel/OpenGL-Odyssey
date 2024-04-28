@@ -4,13 +4,13 @@
 #include <iostream>
 #include <cmath>
 
-#include "shader/Shader.hpp"
-#include "utils/Camera.hpp"
-#include "utils/vec3.hpp"
-#include "utils/Transformation.hpp"
-#include "utils/ModelLoader.hpp"
+#include "../include/Shader.hpp"
+#include "../include/Camera.hpp"
+#include "../libs/SMath/include/vec3.hpp"
+#include "../include/Transformation.hpp"
+#include "../include/ModelLoader.hpp"
 
-#include "geometry/Mesh.hpp"
+#include "../include/Mesh.hpp"
 
 Shader shader;
 

@@ -2,10 +2,10 @@
 #define RENDERABLEOBJECT_HH
 
 #include <vector>
-#include "../geometry/Vertex.h"
-#include "../shader/Shader.hpp"
-#include "../utils/Transformation.hpp"
-#include "../utils/mat4.hpp"
+#include "Vertex.h"
+#include "Shader.hpp"
+#include "Transformation.hpp"
+#include "../libs/SMath/include/mat4.hpp"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>

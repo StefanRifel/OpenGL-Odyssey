@@ -1,12 +1,12 @@
 #ifndef CAMERA_HH
 #define CAMERA_HH
 
-#include "vec3.hpp"
-#include "mat4.hpp"
+#include "../libs/SMath/include/vec3.hpp"
+#include "../libs/SMath/include/mat4.hpp"
 #include "Transformation.hpp"
 #include <GLFW/glfw3.h>
 
-#include "../shader/Shader.hpp"
+#include "Shader.hpp"
 
 class Camera {
 

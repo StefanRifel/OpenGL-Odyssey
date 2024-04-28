@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../utils/mat4.hpp"
+#include "../libs/SMath/include/mat4.hpp"
 
 #include <string>
 #include <fstream>
