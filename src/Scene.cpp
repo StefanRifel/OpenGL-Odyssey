@@ -35,18 +35,42 @@ void Scene::depthTest(bool b) {
 }
 
 void Scene::render() {
+    //imgui
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+
     // render loop
     while (!glfwWindowShouldClose(window)) {
+        //imgui
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::Begin("Debug");
+        float my_color[4];
+        ImGui::ColorEdit4("Color", my_color);
+        ImGui::End();
+
         // input
         processInput(window);
         
         // rendering commands here
         draw();
 
+        //imgui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         // check and call events and swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    //imgui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     glfwTerminate();
 }
 

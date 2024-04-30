@@ -4,6 +4,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "../libs/ImGui/imgui.h"
+#include "../libs/ImGui/imgui_impl_glfw.h"
+#include "../libs/ImGui/imgui_impl_opengl3.h"
+
 #include <string>
 
 #include "Camera.hpp"
