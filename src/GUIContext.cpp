@@ -28,6 +28,8 @@ void GUIContext::preRender() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    // Code for Gui
     ImGui::ShowDemoWindow();
 }
 

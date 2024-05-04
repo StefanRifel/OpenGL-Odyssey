@@ -31,9 +31,9 @@ void Window::render() {
         guiContext->preRender();
         
         // Rendering
-        // draw();
         // (Your code clears your framebuffer, renders your other stuff etc.)
         openglContext->preRender();
+        // draw();
         
         guiContext->postRender();
         // (Your code calls glfwSwapBuffers() etc.)
