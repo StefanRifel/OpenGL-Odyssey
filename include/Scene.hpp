@@ -34,6 +34,8 @@ public:
     void polygonModeRasterized(bool b);
     void depthTest(bool b);
 
+    void onChangeColor(float color[4]);
+
     void render();
     void processInput();
 };

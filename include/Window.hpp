@@ -13,6 +13,8 @@ class GUIContext;
 #include "GUIContext.hpp"
 class Scene;
 #include "Scene.hpp"
+class UIPanel;
+#include "UIPanel.hpp"
 
 class Window {
 public:
@@ -27,6 +29,7 @@ public:
     
     OpenGLContext* openglContext;
     GUIContext* guiContext;
+    UIPanel* uiPanel;
     Scene* scene;
 
 public:

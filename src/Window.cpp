@@ -6,6 +6,7 @@ window {nullptr}, isRunning {true} {
     openglContext = new OpenGLContext {};
     guiContext = new GUIContext {};
     scene = new Scene {};
+    uiPanel = new UIPanel {};
 }
 
 Window::~Window() {
@@ -14,6 +15,7 @@ Window::~Window() {
     delete(scene);
     delete(openglContext);
     delete(guiContext);
+    delete(uiPanel);
 }
 
 void Window::init() {
@@ -36,6 +38,7 @@ void Window::render() {
         // ...
         // Start the Dear ImGui frame
         guiContext->preRender();
+        uiPanel->render(scene);
         
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)

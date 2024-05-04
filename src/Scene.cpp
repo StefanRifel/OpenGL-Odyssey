@@ -29,7 +29,7 @@ bool Scene::init(Window* window) {
 
     // scene settings
     cullFace(true);
-    polygonModeRasterized(true);
+    polygonModeRasterized(false);
     depthTest(true);
 
     return true;
@@ -58,6 +58,13 @@ void Scene::polygonModeRasterized(bool b) {
 
 void Scene::depthTest(bool b) {
     b ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+}
+
+void Scene::onChangeColor(float color[4]) {
+    for (auto obj : renderableObjects) {
+        obj->setColor(vec3 {color[0], color[1], color[2]});
+    }
+    
 }
 
 void Scene::processInput() {
