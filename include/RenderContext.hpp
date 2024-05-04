@@ -1,12 +1,13 @@
 #ifndef RENDERCONTEXT_HH
 #define RENDERCONTEXT_HH
 
-class Window;
+#include <iostream>
 
-#include "Window.hpp"
+class Window;
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 
 class RenderContext {
 public:

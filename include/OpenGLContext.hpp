@@ -2,6 +2,7 @@
 #define OPENGLCONTEXT_HH
 
 #include "RenderContext.hpp"
+#include "Window.hpp"
 
 class OpenGLContext : public RenderContext {
 public:

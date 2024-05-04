@@ -2,6 +2,8 @@
 #define GUICONTEXT_HH
 
 #include "RenderContext.hpp"
+#include <iostream>
+#include "Window.hpp"
 
 #include "../libs/ImGui/imgui.h"
 #include "../libs/ImGui/imgui_impl_glfw.h"
