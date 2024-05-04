@@ -11,6 +11,8 @@ class OpenGLContext;
 #include "OpenGLContext.hpp"
 class GUIContext;
 #include "GUIContext.hpp"
+class Scene;
+#include "Scene.hpp"
 
 class Window {
 public:
@@ -25,7 +27,7 @@ public:
     
     OpenGLContext* openglContext;
     GUIContext* guiContext;
-    //Scene* scene;
+    Scene* scene;
 
 public:
     Window(GLuint width, GLuint height, std::string programmName);

@@ -1,19 +1,51 @@
 #include "../include/Scene.hpp"
 
-Scene::Scene() {
-    camera = new Camera {};
-}
+Scene::Scene() : window {nullptr} {}
 
 Scene::~Scene() {
+    for (RenderableObject* obj : renderableObjects) {
+        delete(obj);
+    }
+}
 
+bool Scene::init(Window* window) {
+    this->window = window;
+    if(!shader.createShader("../shaders/shader.vs", "../shaders/shader.fs")) {
+        std::cerr << "ERROR::SCENE::FAILED_TO_CREATE_SHADER" << std::endl;
+        return false;
+    }
+
+    // create example object
+    ModelLoader loader {};
+    const char* path = "../assets/models/sphere.obj";
+    std::vector<Vertex> inVertices;
+    std::vector<GLuint> inFaces;
+    loader.load(path, inVertices, inFaces);
+
+    Mesh* teapot  = new Mesh {inVertices, inFaces};
+    vec3 color {255, 112, 112};
+    teapot->setColor(color);
+    addRenderableObject(teapot);
+
+    // scene settings
+    cullFace(true);
+    polygonModeRasterized(true);
+    depthTest(true);
+
+    return true;
 }
 
 void Scene::addRenderableObject(RenderableObject* object) {
     renderableObjects.push_back(object);
 }
 
-void Scene::setShader() {
-    shader.createShader("../shaders/shader.vs", "../shaders/shader.fs");
+void Scene::render() {
+    camera.look(shader);
+    for (RenderableObject* obj : renderableObjects) {
+        mat4 model {1.0f};
+        shader.setModel(model);
+        obj->draw(shader);
+    }
 }
 
 void Scene::cullFace(bool b) {
@@ -28,21 +60,12 @@ void Scene::depthTest(bool b) {
     b ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 }
 
-void Scene::draw() {
-    camera->look(shader);
-    for (RenderableObject* obj : renderableObjects) {
-        Transformation::lookAt(camera->cameraPos, camera->cameraFront, camera->cameraUp);
-        mat4 model {1.0f};
-        shader.setModel(model);
-        obj->draw(shader);
+void Scene::processInput() {
+    if(glfwGetKey(window->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        window->onClose();
     }
-}
-
-void Scene::processInput(GLFWwindow* window) {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-
-
+    
+/*
     const float cameraSpeed = 0.05f; // adjust accordingly
 
     // Zoom camera out = "." and in = ","
@@ -92,4 +115,5 @@ void Scene::processInput(GLFWwindow* window) {
         camera->cameraPos.z() = newPos.y();
         std::cout << "turn camera around right: " << camera->cameraPos << std::endl;
     }
+    */
 }

@@ -4,12 +4,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../libs/ImGui/imgui.h"
-#include "../libs/ImGui/imgui_impl_glfw.h"
-#include "../libs/ImGui/imgui_impl_opengl3.h"
-
 #include <string>
 
+#include "Window.hpp"
 #include "Camera.hpp"
 #include "Shader.hpp"
 #include "RenderableObject.hpp"
@@ -18,28 +15,27 @@
 
 class Scene {
 public:
+    Window* window;
+
     std::vector<RenderableObject*> renderableObjects;
-    Camera* camera;
+    Camera camera;
     Shader shader;
 
 public:
     Scene();
     ~Scene();
 
+    bool init(Window* window);
+
     void addRenderableObject(RenderableObject* object);
-    void setShader();
 
     // different window settings
     void cullFace(bool b);
     void polygonModeRasterized(bool b);
     void depthTest(bool b);
 
-    
-
-    void draw();
-    void processInput(GLFWwindow *window);
-
-    GLFWwindow* getWindow() const;
+    void render();
+    void processInput();
 };
 
 #endif

@@ -4,13 +4,6 @@ Camera::Camera() {
     this->cameraPos = {0.0f, 0.0f, 3.0f};
     this->cameraFront = {0.0f, 0.0f, 0.0f};
     this->cameraUp = {0.0f, 1.0f, 0.0f};
-
-    this->radiusXZ = cameraPos.z();
-    this->anlgeXZ = 0;
-}
-
-Camera::~Camera() {
-
 }
 
 void Camera::look(Shader& shader) {

@@ -24,7 +24,7 @@ void Shader::setFloat(const std::string &name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-void Shader::createShader(const char* vertexPath, const char* fragmentPath) {
+bool Shader::createShader(const char* vertexPath, const char* fragmentPath) {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexSource;
     std::string fragmentSource;
@@ -55,7 +55,8 @@ void Shader::createShader(const char* vertexPath, const char* fragmentPath) {
         fragmentSource = fragmentShaderStream.str();
     }
     catch(std::ifstream::failure e) {
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << '\n' << std::endl;
+        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+        return false;
     }
     
     const char* vertexShaderSource = vertexSource.c_str();
@@ -74,6 +75,7 @@ void Shader::createShader(const char* vertexPath, const char* fragmentPath) {
     if(!status) {
         glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog);
         std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        return false;
     }
 
     // create and compile fragment shader
@@ -85,6 +87,7 @@ void Shader::createShader(const char* vertexPath, const char* fragmentPath) {
     if (!status) {
         glGetShaderInfoLog(vertexShader, 1024, NULL, infoLog);
         std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        return false;
     }
 
     // create and link shader program
@@ -98,11 +101,13 @@ void Shader::createShader(const char* vertexPath, const char* fragmentPath) {
     if (!status) {
         glGetProgramInfoLog(ID, 1024, NULL, infoLog);
         std::cerr << "ERROR::SHADER::PROGRAMM::LINKING_FAILED\n" << infoLog << std::endl;
+        return false;
     }
 
     // delete shaders after linking no longer necessary
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    return true;
 }
 
 void Shader::setModel(mat4 model) {
