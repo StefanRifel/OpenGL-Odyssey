@@ -1,21 +1,16 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include "../include/Mesh.hpp"
-#include "../include/Scene.hpp"
-
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    glViewport(0,0, width, height);
-}
+#include "../include/Window.hpp"
+//#include "../include/Scene.hpp"
 
 int main(void) {
     std::cout << "Welcome to OpenGL Odyssey!" << std::endl;
 
-    Scene scene {1024, 768, "OpenGL-Odyssey"};
-    // setup scene
-    glfwSetFramebufferSizeCallback(scene.getWindow(), framebuffer_size_callback);
-    glfwMakeContextCurrent(scene.getWindow());
-    glewInit();
+    Window* window = new Window {1024, 768, "OpenGL-Odyssey"};
+    window->init();
+    window->render();
+    delete(window);
+    
+    
+    /*
     scene.setShader();
 
     // create different objects
@@ -36,6 +31,6 @@ int main(void) {
     scene.depthTest(true);
 
     scene.render();
-
+    */
     return 0;
 }

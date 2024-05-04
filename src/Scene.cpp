@@ -1,12 +1,6 @@
 #include "../include/Scene.hpp"
 
-Scene::Scene() : width {1024}, height {768}, programmName {"no name given"} {
-    initWindow();
-    camera = new Camera {};
-}
-
-Scene::Scene(GLuint width, GLuint height, std::string programmName) : width {width}, height {height}, programmName {programmName} {
-    initWindow();
+Scene::Scene() {
     camera = new Camera {};
 }
 
@@ -34,50 +28,7 @@ void Scene::depthTest(bool b) {
     b ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 }
 
-void Scene::render() {
-    //imgui
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init();
-
-    // render loop
-    while (!glfwWindowShouldClose(window)) {
-        //imgui
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        ImGui::Begin("Debug");
-        float my_color[4];
-        ImGui::ColorEdit4("Color", my_color);
-        ImGui::End();
-
-        // input
-        processInput(window);
-        
-        // rendering commands here
-        draw();
-
-        //imgui
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // check and call events and swap the buffers
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-    //imgui
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    glfwTerminate();
-}
-
 void Scene::draw() {
-    glClearColor(0.94f, 0.93f, 0.81f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
     camera->look(shader);
     for (RenderableObject* obj : renderableObjects) {
         Transformation::lookAt(camera->cameraPos, camera->cameraFront, camera->cameraUp);
@@ -141,8 +92,4 @@ void Scene::processInput(GLFWwindow* window) {
         camera->cameraPos.z() = newPos.y();
         std::cout << "turn camera around right: " << camera->cameraPos << std::endl;
     }
-}
-
-GLFWwindow* Scene::getWindow() const {
-    return window;
 }
