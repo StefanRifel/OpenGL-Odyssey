@@ -1,3 +1,5 @@
+#include "ecs/core/Coordinator.hpp"
+
 #include "../include/Window.hpp"
 
 Window::Window(GLuint width, GLuint height, std::string programmName) 
@@ -19,6 +21,8 @@ Window::~Window() {
 }
 
 void Window::init() {
+    ecs::Coordinator c;
+    c.init();
     if(!openglContext->init(this)) {
         std::cerr << "ERROR::WINDOW::FAILED_TO_INIT_OPENGLCONTEXT" << std::endl;
     }
