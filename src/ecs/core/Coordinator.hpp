@@ -5,6 +5,7 @@
 #include "ComponentManager.hpp"
 #include "EntityManager.hpp"
 #include "SystemManager.hpp"
+#include "EventManager.hpp"
 
 namespace ecs {
     class Coordinator {
@@ -12,6 +13,7 @@ namespace ecs {
         std::unique_ptr<ComponentManager> componentManager;
         std::unique_ptr<EntityManager> entityManager;
         std::unique_ptr<SystemManager> systemManager;
+        std::unique_ptr<EventManager> eventManager;
 
     public:
     	void init() {
@@ -19,6 +21,7 @@ namespace ecs {
             componentManager = std::make_unique<ComponentManager>();
             entityManager = std::make_unique<EntityManager>();
             systemManager = std::make_unique<SystemManager>();
+            eventManager = std::make_unique<EventManager>();
         }
 
         // Entity methods
@@ -82,6 +85,19 @@ namespace ecs {
         template<typename T>
         void setSystemSignature(Signature signature) {
             systemManager->setSignature<T>(signature);
+        }
+
+        // Event methods
+        void AddEventListener(EventId eventId, std::function<void(Event&)> const& listener) {
+            eventManager->addListener(eventId, listener);
+        }
+
+        void SendEvent(Event& event) {
+            eventManager->sendEvent(event);
+        }
+
+        void SendEvent(EventId eventId) {
+            eventManager->sendEvent(eventId);
         }
     }; 
 }
