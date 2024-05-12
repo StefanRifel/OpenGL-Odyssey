@@ -6,6 +6,10 @@
 #include <list>
 #include <functional>
 
+
+#include <bitset>
+#include <cstdint>
+
 namespace ecs {
     class EventManager {
     private:

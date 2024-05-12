@@ -34,4 +34,9 @@ namespace ecs {
     };
 }
 
+namespace ecs::event {
+    const EventId CHANGECOLOR = std::hash<std::string>{}("ECS::EVENT::CHANGECOLOR");
+}
+
+
 #endif

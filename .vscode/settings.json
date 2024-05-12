@@ -54,6 +54,8 @@
         "map": "cpp",
         "bitset": "cpp",
         "set": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "any": "cpp",
+        "list": "cpp"
     }
 }
