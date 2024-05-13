@@ -1,7 +1,7 @@
 #ifndef TRANSFORM_HH
 #define TRANSFORM_HH
 
-#include "../libs/SMath/include/vec3.hpp"
+#include "../../../libs/SMath/include/vec3.hpp"
 
 namespace ecs {
     

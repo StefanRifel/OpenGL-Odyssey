@@ -1,5 +1,5 @@
-#ifndef WINDOW_HH
-#define WINDOW_HH
+#ifndef WINDOWManager_HH
+#define WINDOWManager_HH
 
 #include <string>
 #include <iostream>
@@ -11,12 +11,18 @@ class OpenGLContext;
 #include "OpenGLContext.hpp"
 class GUIContext;
 #include "GUIContext.hpp"
-class Scene;
-#include "Scene.hpp"
+class RenderSystem;
+#include "RenderSystem.hpp"
 class UIPanel;
 #include "UIPanel.hpp"
 
-class Window {
+#include "../src/ecs/core/Coordinator.hpp"
+#include "../src/ecs/component/Transform.hpp"
+#include "../src/ecs/component/Renderable.hpp"
+
+#include "../src/ecs/core/EventManager.hpp"
+
+class WindowManager {
 public:
     // GLFWwindow is inizialized in OpenGLContext
     GLFWwindow* window;
@@ -30,11 +36,14 @@ public:
     OpenGLContext* openglContext;
     GUIContext* guiContext;
     UIPanel* uiPanel;
-    Scene* scene;
+
+
+    ecs::Coordinator coordinator;
+    std::shared_ptr<RenderSystem> renderSystem;
 
 public:
-    Window(GLuint width, GLuint height, std::string programmName);
-    ~Window();
+    WindowManager(GLuint width, GLuint height, std::string programmName);
+    ~WindowManager();
 
     void init();
     void render();

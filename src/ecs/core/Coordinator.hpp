@@ -88,15 +88,15 @@ namespace ecs {
         }
 
         // Event methods
-        void AddEventListener(EventId eventId, std::function<void(Event&)> const& listener) {
+        void addEventListener(EventId eventId, std::function<void(Event)> listener) {
             eventManager->addListener(eventId, listener);
         }
 
-        void SendEvent(Event& event) {
+        void sendEvent(Event& event) {
             eventManager->sendEvent(event);
         }
 
-        void SendEvent(EventId eventId) {
+        void sendEvent(EventId eventId) {
             eventManager->sendEvent(eventId);
         }
     }; 

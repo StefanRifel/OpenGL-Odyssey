@@ -26,7 +26,7 @@ private:
 
 public:
     ModelLoader();
-    static bool load(const char* path, std::vector<Vertex>& outVertices, std::vector<GLuint>& outFaces);
+    static bool load(const char* path, std::vector<vec3>& outVertices, std::vector<GLuint>& outFaces);
     
     ~ModelLoader();
 };

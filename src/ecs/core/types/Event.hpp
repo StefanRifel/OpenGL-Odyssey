@@ -1,42 +1,37 @@
-#ifndef EVENT_HH
-#define EVENT_HH
+#ifndef LISTENER_EVENT_H
+#define LISTENER_EVENT_H
 
 #include <cstdint>
-#include <any>
 #include <unordered_map>
+#include <string>
+#include <utility>
+#include <any>
 
-namespace ecs {
-    using EventId = uint32_t;
-    using ParamId = uint32_t;
+using EventId = uint32_t ;
 
-    class Event {
-    private:
-        EventId type;
-        std::unordered_map<EventId, std::any> data;
-    public:
-        Event() = delete;
-        explicit Event(EventId type) : type {type} {};
+#define METHOD_LISTENER(EventType, Listener) EventType, std::bind(&Listener, this, std::placeholders::_1)
+#define FUNCTION_LISTENER(EventType, Listener) EventType, std::bind(&Listener, std::placeholders::_1)
 
-        EventId getType() const {
-            return type;
-        }
-
-        template<typename T>
-        void SetParam(EventId id, T value) {
-            data[id] = value;
-        }
-
-        template<typename T>
-        T GetParam(EventId id) {
-            return std::any_cast<T>(data[id]);
-        }
-
-    };
+namespace event {
+    const EventId CHANGECOLOR = std::hash<std::string>{}("EVENT::CHANGECOLOR");
 }
 
-namespace ecs::event {
-    const EventId CHANGECOLOR = std::hash<std::string>{}("ECS::EVENT::CHANGECOLOR");
-}
+class Event {
+private:
+    EventId type;
+    std::any data;
+public:
+    Event() = delete;
+    explicit Event(EventId type) : type {type} {};
+    EventId getType() const {
+        return type;
+    }
+    void setData(EventId id, std::any value) {
+        data = std::move(value);
+    }
+    std::any getData() {
+        return data;
+    }
+};
 
-
-#endif
+#endif //LISTENER_EVENT_H

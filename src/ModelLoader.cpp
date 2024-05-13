@@ -6,7 +6,7 @@ ModelLoader::ModelLoader() {
 ModelLoader::~ModelLoader() {
 }
 
-bool ModelLoader::load(const char* path, std::vector<Vertex>& outVertices, std::vector<GLuint>& outFaces) {
+bool ModelLoader::load(const char* path, std::vector<vec3>& outVertices, std::vector<GLuint>& outFaces) {
     std::ifstream modelFile {path};
     std::string line;
 
@@ -17,8 +17,8 @@ bool ModelLoader::load(const char* path, std::vector<Vertex>& outVertices, std::
             std::string token;
             getline(test, token, ' ');
             if (token.at(0) == 'v' && token.size() <= 1) {
-                Vertex vertex;
-                sscanf((line.substr(2, line.length())).c_str(), "%f %f %f", &(vertex.position.x()), &(vertex.position.y()), &(vertex.position.z()));
+                vec3 vertex;
+                sscanf((line.substr(2, line.length())).c_str(), "%f %f %f", &(vertex.x()), &(vertex.y()), &(vertex.z()));
                 outVertices.push_back(vertex);
             } else if (token.at(0) == 'f' && token.size() <= 1) {
                 std::string token;

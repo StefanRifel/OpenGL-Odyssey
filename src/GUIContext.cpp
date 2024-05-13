@@ -8,9 +8,9 @@ GUIContext::~GUIContext() {
     ImGui::DestroyContext();
 }
 
-bool GUIContext::init(Window* window) {
+bool GUIContext::init(WindowManager* windowManager) {
     // call parent class init
-    if(!RenderContext::init(window)) {
+    if(!RenderContext::init(windowManager)) {
         std::cerr << "ERROR::OPENGLCONTEXT::FAILED_TO_INIT_RENDERCONTEXT" << std::endl;
         return false;
     }
@@ -18,7 +18,7 @@ bool GUIContext::init(Window* window) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window->window, true);
+    ImGui_ImplGlfw_InitForOpenGL(windowManager->window, true);
     ImGui_ImplOpenGL3_Init();
 
     return true;
