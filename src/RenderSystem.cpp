@@ -79,24 +79,16 @@ void RenderSystem::createObject(const char* path) {
 
 void RenderSystem::render() {
     shader.use();
-
     for (auto const& entity : entities) {
         auto& r = windowManager->coordinator.getComponent<ecs::Renderable>(entity);
         glBindVertexArray(r.VAO);
-        float vertexFragColor = glGetUniformLocation(shader.ID, "fragColor");
-        glUniform3f(vertexFragColor, r.color.r(), r.color.g(), r.color.b());
+
+        mat4 model {1.0f};
+        shader.setModel(model);
+        shader.setColor(r.color);
 
         glDrawElements(GL_TRIANGLES, r.indices.size(), GL_UNSIGNED_INT, 0);
     }
-    
-    /*
-    camera.look(shader);
-    for (RenderableObject* obj : renderableObjects) {
-        mat4 model {1.0f};
-        shader.setModel(model);
-        obj->draw(shader);
-    }
-    */
 }
 
 void RenderSystem::cullFace(bool b) {

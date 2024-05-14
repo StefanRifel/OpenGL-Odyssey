@@ -6,11 +6,12 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "./Vertex.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+#include "../libs/SMath/include/vec3.hpp"
 
 /*
     This class is responsible for loading .obj files and convert its content to:

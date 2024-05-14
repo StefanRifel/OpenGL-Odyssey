@@ -1,5 +1,3 @@
-#include "ecs/core/Coordinator.hpp"
-
 #include "../include/WindowManager.hpp"
 
 WindowManager::WindowManager(GLuint width, GLuint height, std::string programmName) 

@@ -110,6 +110,11 @@ bool Shader::createShader(const char* vertexPath, const char* fragmentPath) {
     return true;
 }
 
+void Shader::setColor(vec3 color) {
+    float vertexFragColor = glGetUniformLocation(ID, "fragColor");
+    glUniform3f(vertexFragColor, color.r(), color.g(), color.b());
+}
+
 void Shader::setModel(mat4 model) {
     this->model = model;
 

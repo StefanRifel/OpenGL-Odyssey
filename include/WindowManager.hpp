@@ -37,7 +37,6 @@ public:
     GUIContext* guiContext;
     UIPanel* uiPanel;
 
-
     ecs::Coordinator coordinator;
     std::shared_ptr<RenderSystem> renderSystem;
 

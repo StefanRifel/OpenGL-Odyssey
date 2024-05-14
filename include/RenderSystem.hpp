@@ -7,7 +7,6 @@
 #include <string>
 
 #include "WindowManager.hpp"
-#include "Camera.hpp"
 #include "Shader.hpp"
 #include "ModelLoader.hpp"
 
@@ -21,7 +20,6 @@ class RenderSystem : public ecs::System {
 public:
     WindowManager* windowManager;
 
-    Camera camera;
     Shader shader;
 
 public:
