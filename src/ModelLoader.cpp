@@ -6,7 +6,7 @@ ModelLoader::ModelLoader() {
 ModelLoader::~ModelLoader() {
 }
 
-bool ModelLoader::load(const char* path, std::vector<vec3>& outVertices, std::vector<GLuint>& outFaces) {
+bool ModelLoader::load(const char* path, std::vector<vec3>& outVertices, std::vector<GLuint>& outIndices, std::vector<vec3>& outNormals) {
     std::ifstream modelFile {path};
     if(!modelFile.is_open()) {
         std::cerr << "ERROR::MODELLOADER::FAILED_TO_OPEN_FILE" << std::endl;
@@ -23,6 +23,10 @@ bool ModelLoader::load(const char* path, std::vector<vec3>& outVertices, std::ve
             vec3 vertex;
             iss >> vertex.x() >> vertex.y() >> vertex.z();
             outVertices.push_back(vertex);
+        } else if (token == "vn") {
+            vec3 normals;
+            iss >> normals.x() >> normals.y() >> normals.z();
+            outNormals.push_back(normals);
         } else if (token == "f") {
             std::string indices;
             while (iss >> indices) {
@@ -30,7 +34,7 @@ bool ModelLoader::load(const char* path, std::vector<vec3>& outVertices, std::ve
                 std::string indexStr;
                 getline(viss, indexStr, '/');
                 int index = std::stoi(indexStr) - 1; // -1 because indices in obj files starts at 1
-                outFaces.push_back(index);
+                outIndices.push_back(index);
             }
         }
     }

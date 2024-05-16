@@ -54,7 +54,7 @@ void WindowManager::init() {
     }
 
     // create example object
-    const char* path = "../assets/models/earth.obj";
+    const char* path = "../assets/models/cube.obj";
     renderSystem->createObject(path);
 
 }

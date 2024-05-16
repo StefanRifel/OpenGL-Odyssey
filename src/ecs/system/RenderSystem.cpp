@@ -25,10 +25,11 @@ void RenderSystem::createObject(const char* path) {
     GLuint VAO, VBO, EBO;
     std::vector<vec3> vertices;
     std::vector<GLuint> indices;
+    std::vector<vec3> normals;
     vec3 color {0.04f, 0.88f, 0.69f};
 
     ModelLoader loader {};
-    loader.load(path, vertices, indices);
+    loader.load(path, vertices, indices, normals);
 
     // VAO
     glGenVertexArrays(1, &VAO);
