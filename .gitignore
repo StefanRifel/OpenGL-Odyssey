@@ -1,3 +1,5 @@
 .vscode/*
 OpenGL_Odyssey
 *.o
+bin/imgui.ini
+bin/OpenGL_Odyssey_Test
