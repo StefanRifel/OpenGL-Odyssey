@@ -5,6 +5,7 @@
 #include "../libs/SMath/include/mat4.hpp"
 #include "Transformation.hpp"
 
+#include "WindowManager.hpp"
 #include "Shader.hpp"
 
 #include "../src/ecs/core/types/System.hpp"
@@ -12,10 +13,11 @@
 class CameraControlSystem : public ecs::System {
 
 private:
-
+    WindowManager* windowManager;
 public:
     CameraControlSystem();
-    void look(Shader& shader, vec3 cameraPos, vec3 cameraFront, vec3 cameraUp);
+    bool init(WindowManager* windowManager);
+    void render(Shader& shader);
 };
 
 #endif

@@ -20,13 +20,11 @@ class RenderSystem : public ecs::System {
 public:
     WindowManager* windowManager;
 
-    Shader shader;
-
 public:
     RenderSystem();
     ~RenderSystem();
 
-    bool init(WindowManager* windowManager);
+    bool init(WindowManager* windowManager, Shader& shader);
 
     void createObject(const char* path);
 
@@ -37,7 +35,7 @@ public:
 
     void onChangeColor(Event e);
 
-    void render();
+    void render(Shader& shader);
     void processInput();
 };
 

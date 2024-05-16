@@ -21,12 +21,24 @@ void WindowManager::init() {
     coordinator.init();
     coordinator.registerComponent<ecs::Renderable>();
     coordinator.registerComponent<ecs::Transform>();
+    coordinator.registerComponent<ecs::Camera>();
 
     renderSystem = coordinator.registerSystem<RenderSystem>();
-    ecs::Signature signature;
-    signature.set(coordinator.getComponentType<ecs::Renderable>());
-    signature.set(coordinator.getComponentType<ecs::Transform>());
-    coordinator.setSystemSignature<RenderSystem>(signature);
+    {
+        ecs::Signature signature;
+        signature.set(coordinator.getComponentType<ecs::Renderable>());
+        signature.set(coordinator.getComponentType<ecs::Transform>());
+        coordinator.setSystemSignature<RenderSystem>(signature);
+    }
+    
+
+    cameraControlSystem = coordinator.registerSystem<CameraControlSystem>();
+    {
+        ecs::Signature signature;
+        signature.set(coordinator.getComponentType<ecs::Transform>());
+        signature.set(coordinator.getComponentType<ecs::Camera>());
+        coordinator.setSystemSignature<CameraControlSystem>(signature);
+    }
 
     if(!openglContext->init(this)) {
         std::cerr << "ERROR::WINDOWMANAGER::FAILED_TO_INIT_OPENGLCONTEXT" << std::endl;
@@ -34,13 +46,17 @@ void WindowManager::init() {
     if(!guiContext->init(this)) {
         std::cerr << "ERROR::WINDOWMANAGER::FAILED_TO_INIT_GUICONTEXT" << std::endl;
     }
-    if(!renderSystem->init(this)) {
-        std::cerr << "ERROR::WINDOWMANAGER::FAILED_TO_INIT_RenderSystem" << std::endl;
+    if(!renderSystem->init(this, shader)) {
+        std::cerr << "ERROR::WINDOWMANAGER::FAILED_TO_INIT_RENDERSYSTEM" << std::endl;
+    }
+    if(!cameraControlSystem->init(this)) {
+        std::cerr << "ERROR::WINDOWMANAGER::FAILED_TO_INIT_CAMERACONTROLSYSTEM" << std::endl;
     }
 
     // create example object
     const char* path = "../assets/models/earth.obj";
     renderSystem->createObject(path);
+
 }
 
 void WindowManager::render() {
@@ -57,7 +73,8 @@ void WindowManager::render() {
         // (Your code clears your framebuffer, renders your other stuff etc.)
         openglContext->preRender();
         
-        renderSystem->render();
+        cameraControlSystem->render(shader);
+        renderSystem->render(shader);
         
         guiContext->postRender();
         // (Your code calls glfwSwapBuffers() etc.)

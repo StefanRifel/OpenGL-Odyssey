@@ -4,7 +4,7 @@ RenderSystem::RenderSystem() : windowManager {nullptr} {}
 
 RenderSystem::~RenderSystem() {}
 
-bool RenderSystem::init(WindowManager* windowManager) {
+bool RenderSystem::init(WindowManager* windowManager, Shader& shader) {
     this->windowManager = windowManager;
     if(!shader.createShader("../shaders/shader_vert.glsl", "../shaders/shader_frag.glsl")) {
         std::cerr << "ERROR::RenderSystem::FAILED_TO_CREATE_SHADER" << std::endl;
@@ -59,9 +59,9 @@ void RenderSystem::createObject(const char* path) {
     ecs::Entity entity = windowManager->coordinator.createEntity();
     windowManager->coordinator.addComponent(entity, 
         ecs::Transform{
-            .position = vec3(0.0f, 0.0f, 0.0f),
-            .rotation = vec3(0.0f, 0.0f, 0.0f),
-            .scale = vec3(0.0f, 0.0f, 0.0f)
+            .position = vec3 {0.0f, 0.0f, 0.0f},
+            .rotation = vec3 {0.0f, 0.0f, 0.0f},
+            .scale = vec3 {0.5f, 0.5f, 0.5f}
         }
     );
 
@@ -77,17 +77,21 @@ void RenderSystem::createObject(const char* path) {
     );
 }
 
-void RenderSystem::render() {
+void RenderSystem::render(Shader& shader) {
     shader.use();
     for (auto const& entity : entities) {
-        auto& r = windowManager->coordinator.getComponent<ecs::Renderable>(entity);
-        glBindVertexArray(r.VAO);
-
+        auto& renderable = windowManager->coordinator.getComponent<ecs::Renderable>(entity);
+        auto& transform = windowManager->coordinator.getComponent<ecs::Transform>(entity);
+        glBindVertexArray(renderable.VAO);
         mat4 model {1.0f};
-        shader.setModel(model);
-        shader.setColor(r.color);
 
-        glDrawElements(GL_TRIANGLES, r.indices.size(), GL_UNSIGNED_INT, 0);
+        model = Transformation::translate(model, transform.position);
+        model = Transformation::scale(model, transform.scale);
+
+        shader.setModel(model);
+        shader.setColor(renderable.color);
+
+        glDrawElements(GL_TRIANGLES, renderable.indices.size(), GL_UNSIGNED_INT, 0);
     }
 }
 

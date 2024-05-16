@@ -13,12 +13,15 @@ class GUIContext;
 #include "GUIContext.hpp"
 class RenderSystem;
 #include "RenderSystem.hpp"
+class CameraControlSystem;
+#include "CameraControlSystem.hpp"
 class UIPanel;
 #include "UIPanel.hpp"
 
 #include "../src/ecs/core/Coordinator.hpp"
 #include "../src/ecs/component/Transform.hpp"
 #include "../src/ecs/component/Renderable.hpp"
+#include "../src/ecs/component/Camera.hpp"
 
 #include "../src/ecs/core/EventManager.hpp"
 
@@ -33,12 +36,15 @@ public:
 
     bool isRunning;
     
+    Shader shader;
+
     OpenGLContext* openglContext;
     GUIContext* guiContext;
     UIPanel* uiPanel;
 
     ecs::Coordinator coordinator;
     std::shared_ptr<RenderSystem> renderSystem;
+    std::shared_ptr<CameraControlSystem> cameraControlSystem;
 
 public:
     WindowManager(GLuint width, GLuint height, std::string programmName);

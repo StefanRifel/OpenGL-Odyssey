@@ -4,9 +4,12 @@
 #include "../../../libs/SMath/include/vec3.hpp"
 
 namespace ecs {
-    vec3 cameraPos;
-    vec3 cameraFront;
-    vec3 cameraUp;
+
+    struct Camera {
+        vec3 cameraPos;
+        vec3 cameraFront;
+        vec3 cameraUp;
+    };
 }
 
 #endif
