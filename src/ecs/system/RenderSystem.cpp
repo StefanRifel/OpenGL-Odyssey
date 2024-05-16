@@ -1,4 +1,4 @@
-#include "../include/RenderSystem.hpp"
+#include "../../../include/RenderSystem.hpp"
 
 RenderSystem::RenderSystem() : windowManager {nullptr} {}
 

@@ -1,4 +1,4 @@
-#include "../include/CameraControlSystem.hpp"
+#include "../../../include/CameraControlSystem.hpp"
 
 CameraControlSystem::CameraControlSystem() {
     //this->cameraPos = {0.0f, 0.0f, 3.0f};

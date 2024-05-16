@@ -1,4 +1,4 @@
-#include "../include/UIPanel.hpp"
+#include "../../include/UIPanel.hpp"
 
 UIPanel::UIPanel() {
 

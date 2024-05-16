@@ -24,4 +24,4 @@ bin/obj/%.o: $(SRC)/%.cpp
 	g++ -c $< -o $@
 
 clean:
-	rm $(BIN)/* $(BIN)/$(OBJ)/*
+	rm -rf $(BIN)/*
