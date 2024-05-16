@@ -11,7 +11,7 @@ BIN = bin
 OBJ = obj
 
 TARGET = $(BIN)/$(PROGRAMM_NAME)
-SRCS = $(wildcard $(SRC)/*.cpp)
+SRCS = $(shell find $(SRC) -name '*.cpp')
 OBJS = $(patsubst $(SRC)/%.cpp, $(BIN)/$(OBJ)/%.o, $(SRCS))
 
 all:$(TARGET)
@@ -20,6 +20,7 @@ $(TARGET): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(GLEW_LIBS) $(GLFW_LIBS) $(SMATH) $(IMGUI)
 
 bin/obj/%.o: $(SRC)/%.cpp
+	@mkdir -p $(@D)
 	g++ -c $< -o $@
 
 clean:
