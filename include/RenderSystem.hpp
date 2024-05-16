@@ -9,6 +9,7 @@
 #include "WindowManager.hpp"
 #include "Shader.hpp"
 #include "ModelLoader.hpp"
+#include "Vertex.hpp"
 
 #include "../src/ecs/core/types/System.hpp"
 #include "../src/ecs/core/types/Event.hpp"

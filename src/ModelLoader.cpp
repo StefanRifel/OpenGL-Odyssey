@@ -6,7 +6,7 @@ ModelLoader::ModelLoader() {
 ModelLoader::~ModelLoader() {
 }
 
-bool ModelLoader::load(const char* path, std::vector<vec3>& outVertices, std::vector<GLuint>& outIndices, std::vector<vec3>& outNormals) {
+bool ModelLoader::load(const char* path, std::vector<Vertex>& outVertices, std::vector<GLuint>& outIndices) {
     std::ifstream modelFile {path};
     if(!modelFile.is_open()) {
         std::cerr << "ERROR::MODELLOADER::FAILED_TO_OPEN_FILE" << std::endl;
@@ -19,14 +19,14 @@ bool ModelLoader::load(const char* path, std::vector<vec3>& outVertices, std::ve
         std::string token;
         iss >> token;
 
+        int index = 0;
         if (token == "v") {
-            vec3 vertex;
-            iss >> vertex.x() >> vertex.y() >> vertex.z();
+            Vertex vertex;
+            iss >> vertex.position.x() >> vertex.position.y() >> vertex.position.z();
             outVertices.push_back(vertex);
         } else if (token == "vn") {
-            vec3 normals;
-            iss >> normals.x() >> normals.y() >> normals.z();
-            outNormals.push_back(normals);
+            iss >> outVertices[index].normals.x() >> outVertices[index].normals.y() >> outVertices[index].normals.z();
+            index++;
         } else if (token == "f") {
             std::string indices;
             while (iss >> indices) {

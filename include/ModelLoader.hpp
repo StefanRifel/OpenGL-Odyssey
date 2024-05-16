@@ -13,6 +13,8 @@
 
 #include "../libs/SMath/include/vec3.hpp"
 
+#include "Vertex.hpp"
+
 /*
     This class is responsible for loading .obj files and convert its content to:
     - v = vertex
@@ -26,7 +28,7 @@ private:
 
 public:
     ModelLoader();
-    static bool load(const char* path, std::vector<vec3>& outVertices, std::vector<GLuint>& outIndices, std::vector<vec3>& normals);
+    static bool load(const char* path, std::vector<Vertex>& outVertices, std::vector<GLuint>& outIndices);
     
     ~ModelLoader();
 };

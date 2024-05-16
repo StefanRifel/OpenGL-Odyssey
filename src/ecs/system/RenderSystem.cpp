@@ -23,14 +23,13 @@ bool RenderSystem::init(WindowManager* windowManager, Shader& shader) {
 
 void RenderSystem::createObject(const char* path) {
     GLuint VAO, VBO, EBO;
-    std::vector<vec3> vertices;
+    std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
-    std::vector<vec3> normals;
     vec3 color {0.04f, 0.88f, 0.69f};
 
     ModelLoader loader {};
-    loader.load(path, vertices, indices, normals);
-
+    loader.load(path, vertices, indices);
+    
     // VAO
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -38,17 +37,27 @@ void RenderSystem::createObject(const char* path) {
     // VBO for Position
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), &(vertices[0]), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &(vertices[0]), GL_STATIC_DRAW);
 
     glVertexAttribPointer(
         0,                      // location attribute number in vertex shader  
         3,                      // size of the vertex attribute
         GL_FLOAT,               // type of the data
         GL_FALSE,               // if we want the data to be normalized
-        sizeof(vec3),           // stride and tells us the space between consecutive vertex attributes
+        sizeof(Vertex),         // stride and tells us the space between consecutive vertex attributes
         (void*)0                // offset of where the position data begins in the buffer
     );
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(
+        1,                      
+        3,                      
+        GL_FLOAT,               
+        GL_FALSE,               
+        sizeof(Vertex),           
+        (void*)sizeof(vec3)                
+    );
+    glEnableVertexAttribArray(1);
 
     if(indices.size() != 0) {
         //EBO
@@ -73,7 +82,7 @@ void RenderSystem::createObject(const char* path) {
             .EBO = EBO,
             .color = color,
             .vertices = vertices,
-            .indices = indices
+            .indices = indices,
         }
     );
 }
