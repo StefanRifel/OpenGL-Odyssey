@@ -27,7 +27,7 @@ public:
 
     bool init(WindowManager* windowManager, Shader& shader);
 
-    void createObject(const char* path);
+    void createObject(const char* path, vec3 color, vec3 position);
 
     // different windowManager settings
     void cullFace(bool b);

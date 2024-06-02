@@ -55,8 +55,15 @@ void WindowManager::init() {
 
     // create example object
     const char* path = "../assets/models/teapot.obj";
-    renderSystem->createObject(path);
+    vec3 color {0.04f, 0.88f, 0.69f};
+    vec3 position {0.0f, 0.0f, 0.0f};
+    renderSystem->createObject(path, color, position);
 
+    //path = "../assets/models/earth.obj";
+    //vec3 lightColor {1.0f, 1.0f, 1.0f};
+    //shader.setColor(lightColor, "lightColor");
+    //vec3 lightPos{2.0f, 1.5f, 5.0f};
+    //renderSystem->createObject(path, lightColor, lightPos);
 }
 
 void WindowManager::render() {

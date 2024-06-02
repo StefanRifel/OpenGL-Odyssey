@@ -14,18 +14,17 @@ bool RenderSystem::init(WindowManager* windowManager, Shader& shader) {
     windowManager->coordinator.addEventListener(METHOD_LISTENER(event::CHANGECOLOR, RenderSystem::onChangeColor));
 
     // RenderSystem settings
-    cullFace(true);
-    polygonModeRasterized(true);
+    cullFace(false);
+    polygonModeRasterized(false);
     depthTest(true);
 
     return true;
 }
 
-void RenderSystem::createObject(const char* path) {
+void RenderSystem::createObject(const char* path, vec3 color, vec3 position) {
     GLuint VAO, VBO, EBO;
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
-    vec3 color {0.04f, 0.88f, 0.69f};
 
     ModelLoader loader {};
     loader.load(path, vertices, indices);
@@ -69,7 +68,7 @@ void RenderSystem::createObject(const char* path) {
     ecs::Entity entity = windowManager->coordinator.createEntity();
     windowManager->coordinator.addComponent(entity, 
         ecs::Transform{
-            .position = vec3 {0.0f, 0.0f, 0.0f},
+            .position = position,
             .rotation = vec3 {0.0f, 0.0f, 0.0f},
             .scale = vec3 {0.5f, 0.5f, 0.5f}
         }
@@ -96,10 +95,10 @@ void RenderSystem::render(Shader& shader) {
         mat4 model {1.0f};
 
         model = Transformation::translate(model, transform.position);
-        model = Transformation::scale(model, transform.scale);
+        //model = Transformation::scale(model, transform.scale);
 
         shader.setModel(model);
-        shader.setColor(renderable.color);
+        shader.setColor(renderable.color, "color");
 
         glDrawElements(GL_TRIANGLES, renderable.indices.size(), GL_UNSIGNED_INT, 0);
     }

@@ -21,7 +21,7 @@ bool CameraControlSystem::init(WindowManager* windowManager) {
 
     windowManager->coordinator.addComponent(entity, 
         ecs::Camera{
-            .cameraPos = vec3 {0.0f, 0.0f, 3.0f},
+            .cameraPos = vec3 {1.0f, 7.0f, 8.0f},
             .cameraFront = vec3 {0.0f, 0.0f, 0.0f},
             .cameraUp = vec3 {0.0f, 1.0f, 0.0f}
         }
